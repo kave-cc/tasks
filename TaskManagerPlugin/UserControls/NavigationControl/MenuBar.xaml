@@ -1,0 +1,145 @@
+﻿<!--
+Copyright 2017 Nico Strebel
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<UserControl x:Class="TaskManagerPlugin.UserControls.NavigationControl.MenuBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TaskManagerPlugin.UserControls.NavigationControl"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BitmapImage x:Key="MoveToBranch" UriSource="../../Resources/Icons/MoveToBranch_x16.png"/>
+        <BitmapImage x:Key="MoveToSubBranch" UriSource="../../Resources/Icons/MoveToSubBranch_x16.png"/>
+        <BitmapImage x:Key="MoveUp" UriSource="../../Resources/Icons/MoveUp_16x.png"/>
+        <BitmapImage x:Key="MoveDown" UriSource="../../Resources/Icons/MoveDown_16x.png"/>
+        <BitmapImage x:Key="TaskCreate" UriSource="../../Resources/Icons/TaskCreate_16x.png"/>
+        <BitmapImage x:Key="TaskComplete" UriSource="../../Resources/Icons/TaskComplete_16x.PNG"/>
+        <BitmapImage x:Key="TaskDelete" UriSource="../../Resources/Icons/OnTaskDeleted_16x.PNG"/>
+        <BitmapImage x:Key="TaskEdit" UriSource="../../Resources/Icons/OnTaskChanged_16x.PNG"/>
+        <BitmapImage x:Key="TaskActivate" UriSource="../../Resources/Icons/TaskActivate_16x.png"/>
+        <BitmapImage x:Key="TaskPause" UriSource="../../Resources/Icons/TaskPause_16x.png"/>
+        <BitmapImage x:Key="TaskShowActive" UriSource="../../Resources/Icons/TaskShowActive_16x.png"/>
+        <BitmapImage x:Key="Backward" UriSource="../../Resources/Icons/Backward_16x.png"/>
+        <BitmapImage x:Key="Forward" UriSource="../../Resources/Icons/Forward_16x.png"/>
+        <BitmapImage x:Key="Settings" UriSource="../../Resources/Icons/OptionsDropdown_23x16.png"/>
+
+        <BooleanToVisibilityConverter x:Key="VisibilityConverter" />
+        <Style x:Key="DisabledItemStyle" TargetType="{x:Type MenuItem}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="#CFD6E5">
+            <MenuItem Name="Backward" IsEnabled="{Binding BackwardEnabled}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Navigate Backward" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource Backward}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="Forward" IsEnabled="{Binding ForwardEnabled}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Navigate Forward" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource Forward}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+            <MenuItem Name="MenuItemAdd" Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="New task">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource TaskCreate}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemShowActive" Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Show active task">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource TaskShowActive}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+            <MenuItem Name="MenuItemMoveUp" IsEnabled="{Binding MoveUpEnabled}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Move up" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource MoveUp}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemMoveDown" IsEnabled="{Binding MoveDownEnabled}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Move down" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource MoveDown}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemMoveLeft" IsEnabled="{Binding MoveLeftEnabled}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Move to Parent" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource MoveToBranch}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemMoveRight" IsEnabled="{Binding MoveRightEnabled}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Make SubTask of previous Task" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource MoveToSubBranch}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+            <MenuItem Name="MenuItemActivate" IsEnabled="{Binding ActivateEnabled}" Visibility="{Binding ActivateEnabled, Converter={StaticResource VisibilityConverter}}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Activate task">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource TaskActivate}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemPause" IsEnabled="{Binding PauseEnabled}" Visibility="{Binding PauseEnabled, Converter={StaticResource VisibilityConverter}}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Pause task">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource TaskPause}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemOpen" IsEnabled="{Binding OpenEnabled}" Visibility="{Binding OpenEnabled, Converter={StaticResource VisibilityConverter}}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Open task">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource TaskCreate}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemClose" IsEnabled="{Binding CloseEnabled}" Visibility="{Binding CloseEnabled, Converter={StaticResource VisibilityConverter}}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Complete task" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource TaskComplete}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemEdit" IsEnabled="{Binding EditEnabled}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Edit task" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource TaskEdit}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Name="MenuItemDelete" IsEnabled="{Binding DeleteEnabled}"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Delete task" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource TaskDelete}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}"/>
+            <MenuItem Name="MenuItemIconMenu"
+                      Click="MenuItem_Click" Padding="0,0,0,0" ToolTip="Change Icon Settings" Style="{StaticResource DisabledItemStyle}">
+                <MenuItem.Icon>
+                    <Image Source="{StaticResource Settings}"/>
+                </MenuItem.Icon>
+            </MenuItem>
+        </Menu>
+    </DockPanel>
+</UserControl>

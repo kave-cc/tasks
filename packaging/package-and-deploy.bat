@@ -1,0 +1,36 @@
+@echo off
+::
+::
+:: this is the example, copy it and name the copy "package-and-deploy.bat"
+::
+::
+
+:: this picks the first .csproj or .nuspec file in the working directory and builds a .nupkg from it
+:: to package a specific project or file, add the .csproj or .nupkg file name after the pack option
+:: -NoPackageAnalysis suppresses warnings, caused by R# bundles not adhering to the NuGet structure conventions
+
+set TIME1=%time::=%
+set TIME2=%TIME1: =0%
+set TIME3=%TIME2:~0,-3%
+::echo %TIME2%
+
+::english system
+set DATE1=%date:~-4,4%%date:~-7,2%%date:~-10,2%
+::german system
+::set DATE1=%date:~-4,4%%date:~-10,2%%date:~-7,2%
+::echo %DATE1%
+
+set TIMESTAMP=%DATE1%-%TIME3%
+echo Building Task Manager Plguin @ %TIMESTAMP%...
+
+:: uncomment the following to build as part of the script
+::msbuild /consoleloggerparameters:NoItemAndPropertyList KaVE.Feedback.sln
+
+set TARGET=C:\Users\ncstr\resharperDebug
+
+nuget.exe pack taskmanager.nuspec -Version 1.0.0-v%TIMESTAMP% -Verbosity Detailed -NoPackageAnalysis
+
+echo Deploying into: %TARGET%
+move *.nupkg %TARGET%
+
+pause

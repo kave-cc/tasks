@@ -1,0 +1,157 @@
+﻿<!--
+Copyright 2017 Nico Strebel
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<UserControl x:Class="TaskManagerPlugin.UserControls.TaskDetail.TaskDetailControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:model="clr-namespace:TaskManagerPlugin.Model"
+             xmlns:converter="clr-namespace:TaskManagerPlugin.UserControls.TaskDetail.Converter"
+             xmlns:util="clr-namespace:TaskManagerPlugin.Util"
+             mc:Ignorable="d"
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <converter:PrettyDateConverter x:Key="DateConverter"/>
+        <util:MinutesToDurationConverter x:Key="DurationConverter" /> 
+        <Image x:Key="ExpandIcon" Source="../../Resources/Icons/Expand_16x.png" Width="16" Height="16" x:Shared="False"/>
+        <Image x:Key="ShowIcon" Source="../../Resources/Icons/Expand_16x.png" Width="16" Height="16"/>
+    </UserControl.Resources>
+    <Border Padding="10" Background="White">
+        <StackPanel Margin="3" Name="Panel" HorizontalAlignment="Stretch">
+            <TextBlock Name="TaskTitle" Text="{Binding Task.Title, Mode=OneWay}" FontWeight="Bold" FontSize="15"/>
+            <TextBlock Name="Description" Text="{Binding Task.Description}" TextWrapping="Wrap"/>
+            <DockPanel>
+                <Label Target="Importance" Content="Importance" FontWeight="Bold"/>
+                <Image Name="Importance" Height="12"
+                       HorizontalAlignment="Right" ToolTip="Importance">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Task.Importance}"  Value="Important">
+                                    <Setter Property="Source" Value="../../Resources/Icons/ImportanceHigh_16x.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Task.Importance}"  Value="Normal">
+                                    <Setter Property="Source" Value="../../Resources/Icons/ImportanceNormal_16x.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Task.Importance}"  Value="Trivial">
+                                    <Setter Property="Source" Value="../../Resources/Icons/ImportanceLow_16x.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </DockPanel>
+            <DockPanel>
+                <Label Target="Urgency" Content="Urgency" FontWeight="Bold"/>
+                <Image Name="Urgency" Height="12"
+                       HorizontalAlignment="Right" ToolTip="Urgency">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Task.Urgency}"  Value="Urgent">
+                                    <Setter Property="Source" Value="../../Resources/Icons/UrgencyHigh_16x.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Task.Urgency}"  Value="Normal">
+                                    <Setter Property="Source" Value="../../Resources/Icons/UrgencyNormal_16x.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Task.Urgency}"  Value="NotUrgent">
+                                    <Setter Property="Source" Value="../../Resources/Icons/UrgencyLow_16x.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </DockPanel>
+            <DockPanel>
+                <Label Target="Annoyance" Content="Annoyance" FontWeight="Bold"/>
+                <Image Name="Annoyance" Height="12"
+                       HorizontalAlignment="Right" ToolTip="Urgency">
+                    <Image.Style>
+                        <Style TargetType="Image">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Task.Annoyance}"  Value="Annoying">
+                                    <Setter Property="Source" Value="../../Resources/Icons/AnnoyanceHigh_16x.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Task.Annoyance}"  Value="Normal">
+                                    <Setter Property="Source" Value="../../Resources/Icons/AnnoyanceNormal_16x.png"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Task.Annoyance}"  Value="Pleasant">
+                                    <Setter Property="Source" Value="../../Resources/Icons/AnnoyanceLow_16x.png"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+            </DockPanel>
+
+
+            <DockPanel HorizontalAlignment="Stretch" 
+                        Visibility="{Binding ShowSubTasks, Converter={StaticResource BoolToVisibility}}">
+                <Label Content="SubTasks" FontWeight="Bold" Target="SubTaskList"/>
+                <TextBlock Name="CompletedTaskOverview" VerticalAlignment="Center" TextAlignment="Right" HorizontalAlignment="Right">
+                    <TextBlock.Text>
+                        <MultiBinding StringFormat="({0}/{1})">
+                            <Binding Path="DoneSubTasksCount"/>
+                            <Binding Path="SubTaskCount"/>
+                        </MultiBinding>
+                    </TextBlock.Text>
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="Orange"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding AllSubTasksDone}" Value="True">
+                                    <Setter Property="Foreground" Value="Green"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding DoneSubTasksCount}" Value="0">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>  
+                </TextBlock>
+            </DockPanel>
+            <ListBox Name="SubTaskList" ItemsSource="{Binding Task.SubTasks}" 
+                        Visibility="{Binding ShowSubTasks, Converter={StaticResource BoolToVisibility}}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="model:Task">
+                        <DockPanel>
+                            <TextBlock Name="Title" Text="{Binding Title}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       TextAlignment="Right" PreviewMouseDown="Show_Click" Foreground="Blue" TextDecorations="Underline"/>
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <ContentControl Content="{Binding Task.Parent}" Visibility="{Binding ShowParentTask, Converter={StaticResource BoolToVisibility}}">
+                <ContentControl.ContentTemplate>
+                    <DataTemplate DataType="model:Task">
+                        <DockPanel HorizontalAlignment="Stretch">
+                            <Label Content="Parent" Target="{Binding ParentTask}" FontWeight="Bold"
+                                   Visibility="{Binding ShowParentTask, Converter={StaticResource BoolToVisibility}}"/>
+                            <TextBlock Name="Title" Text="{Binding Title}" HorizontalAlignment="Right" VerticalAlignment="Center"
+                                       TextAlignment="Right" PreviewMouseDown="Show_Click" Foreground="Blue" TextDecorations="Underline"/>
+                        </DockPanel>
+                    </DataTemplate>
+                </ContentControl.ContentTemplate>
+            </ContentControl>
+            <DockPanel>
+                <Label Content="Time used: " FontWeight="Bold" Target="{Binding ElementName=ActiveTime}"/>
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right"
+                           Name="ActiveTime" Text="{Binding Task.Duration, Converter={StaticResource DurationConverter}}"/>
+            </DockPanel>
+        </StackPanel>
+    </Border>
+</UserControl>

@@ -1,0 +1,266 @@
+﻿<UserControl x:Class="TaskManagerPlugin.UserControls.TaskOverview.UserControl.TaskOverviewControl"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:model="clr-namespace:TaskManagerPlugin.Model" 
+        xmlns:util="clr-namespace:TaskManagerPlugin.Util"
+        xmlns:userControls="clr-namespace:TaskManagerPlugin.UserControls"
+        HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+        Name="TaskOverview"
+        mc:Ignorable="d">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <BitmapImage x:Key="ImportanceHighIcon" UriSource="../../../Resources/Icons/ImportanceHigh_16x.png"/>
+        <BitmapImage x:Key="MoveToBranch" UriSource="../../../Resources/Icons/MoveToBranch_x16.png"/>
+        <BitmapImage x:Key="MoveToSubBranch" UriSource="../../../Resources/Icons/MoveToSubBranch_x16.png"/>
+        <BitmapImage x:Key="MoveUp" UriSource="../../../Resources/Icons/MoveUp_16x.png"/>
+        <BitmapImage x:Key="MoveDown" UriSource="../../../Resources/Icons/MoveDown_16x.png"/>
+        <BitmapImage x:Key="TaskCreate" UriSource="../../../Resources/Icons/TaskCreate_16x.png"/>
+        <BitmapImage x:Key="TaskComplete" UriSource="../../../Resources/Icons/TaskComplete_16x.PNG"/>
+        <BitmapImage x:Key="TaskDelete" UriSource="../../../Resources/Icons/OnTaskDeleted_16x.PNG"/>
+        <BitmapImage x:Key="TaskEdit" UriSource="../../../Resources/Icons/OnTaskChanged_16x.PNG"/>
+        <BitmapImage x:Key="TaskActivate" UriSource="../../../Resources/Icons/TaskActivate_16x.png"/>
+        <BitmapImage x:Key="TaskPause" UriSource="../../../Resources/Icons/TaskPause_16x.png"/>
+        <BitmapImage x:Key="TaskShowActive" UriSource="../../../Resources/Icons/TaskShowActive_16x.png"/>
+        <BitmapImage x:Key="Backward" UriSource="../../../Resources/Icons/Backward_16x.png"/>
+        <BitmapImage x:Key="Forward" UriSource="../../../Resources/Icons/Forward_16x.png"/>
+
+        <Style x:Key="DisabledItemStyle" TargetType="{x:Type MenuItem}">
+            <Style.Triggers>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Opacity" Value="0.5"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        
+    </UserControl.Resources>
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+        <DockPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <TabControl Background="Azure" Name="OverviewTabControl" TabStripPlacement="Bottom" SelectionChanged="OverviewTabControl_OnSelectionChanged">
+                <TabItem Header="Open" Name="OpenTab">
+                    <TreeView ItemsSource="{Binding OpenTasks}" Name="OpenTasks" SelectedItemChanged="Tree_SelectedItemChanged">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="True"/>
+                                <EventSetter Event="PreviewMouseDoubleClick" Handler="TreeViewItem_DoubleClick"/>
+                                <EventSetter Event="MouseRightButtonUp" Handler="TreeViewItem_RightClick"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type model:Task}" 
+                                                      ItemsSource="{Binding SubTasks}">
+                                <Border BorderThickness="2"
+                                    Background="Transparent">
+                                    <Border.Style>
+                                        <Style TargetType="{x:Type Border}">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                    <DataTrigger.Setters>
+                                                        <Setter Property="BorderBrush" Value="Gold" />
+                                                    </DataTrigger.Setters>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Name="Importance" Height="12" 
+                                               Visibility="{Binding DataContext.IconsSettings.ShowImportance, ElementName=TaskOverview,
+                                            Converter={StaticResource BoolToVisibilityConverter}}"
+                                               HorizontalAlignment="Right" ToolTip="Importance">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Importance}"  Value="Low">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/ImportanceHigh_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Importance}"  Value="Unknown">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/ImportanceNormal_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Importance}"  Value="High">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/ImportanceLow_16x.png"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                        <Image Name="Urgency" Height="12"
+                                               Visibility="{Binding DataContext.IconsSettings.ShowUrgency, ElementName=TaskOverview,
+                                            Converter={StaticResource BoolToVisibilityConverter}}"
+                                               HorizontalAlignment="Right" ToolTip="Urgency">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Low">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/UrgencyHigh_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Unknown">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/UrgencyNormal_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Urgency}"  Value="High">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/UrgencyLow_16x.png"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                        <Image Name="Annoyance" Height="12"
+                                               Visibility="{Binding DataContext.IconsSettings.ShowAnnoyance, ElementName=TaskOverview,
+                                            Converter={StaticResource BoolToVisibilityConverter}}"
+                                               HorizontalAlignment="Right" ToolTip="Annoyance">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="High">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceHigh_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Unknown">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceNormal_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Low">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceLow_16x.png"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                        <StackPanel>
+                                            <TextBlock Focusable="True" Text="{Binding Title}" Margin="2 2 2 2">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsOpen}" Value="False">
+                                                                <DataTrigger.Setters>
+                                                                    <Setter Property="TextDecorations" Value="Strikethrough"/>
+                                                                </DataTrigger.Setters>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                        <Style.Setters>
+                                                            <Setter Property="TextWrapping" Value="Wrap"/>
+                                                            <EventSetter Event="MouseLeftButtonDown" Handler="TextBox_Click" />
+                                                        </Style.Setters>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBox Name="Title"
+                                                     Text="{Binding Title, UpdateSourceTrigger=LostFocus}" Visibility="Collapsed" 
+                                                     LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" GotKeyboardFocus="TextBox_KeyboardFocus" MouseDoubleClick="TextBox_DoubleClick"/>
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Description}" Margin="10 2 2 2">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="{x:Type TextBlock}">
+                                                        <Style.Setters>
+                                                            <Setter Property="Foreground" Value="Gray" />
+                                                            <Setter Property="TextWrapping" Value="Wrap"/>
+                                                            <EventSetter Event="MouseLeftButtonDown" Handler="TextBox_Click" />
+                                                        </Style.Setters>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBox Name="Description"
+                                                Text="{Binding Description, UpdateSourceTrigger=LostFocus}" Visibility="Collapsed" 
+                                                     LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" GotKeyboardFocus="TextBox_KeyboardFocus" MouseDoubleClick="TextBox_DoubleClick"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+                </TabItem>
+                <TabItem Header="Closed" Name="ClosedTab">
+                    <TreeView ItemsSource="{Binding ClosedTasks}" Name="ClosedTasks"
+                              SelectedItemChanged="Tree_SelectedItemChanged">
+                        <TreeView.ItemContainerStyle>
+                            <Style TargetType="{x:Type TreeViewItem}">
+                                <Setter Property="IsExpanded" Value="True"/>
+                                <EventSetter Event="PreviewMouseDoubleClick" Handler="TreeViewItem_DoubleClick"/>
+                                <EventSetter Event="MouseRightButtonUp" Handler="TreeViewItem_RightClick"/>
+                            </Style>
+                        </TreeView.ItemContainerStyle>
+                        <TreeView.Resources>
+                            <HierarchicalDataTemplate DataType="{x:Type model:Task}" 
+                                                      ItemsSource="{Binding SubTasks}">
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Name="Importance" Height="12"
+                                           Visibility="{Binding DataContext.IconsSettings.ShowImportance, ElementName=TaskOverview,
+                                            Converter={StaticResource BoolToVisibilityConverter}}"
+                                           HorizontalAlignment="Right" ToolTip="Importance">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Importance}"  Value="High">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/ImportanceHigh_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Importance}"  Value="Unknown">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/ImportanceNormal_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Importance}"  Value="Low">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/ImportanceLow_16x.png"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                    <Image Name="Urgency" Height="12"
+                                           Visibility="{Binding DataContext.IconsSettings.ShowUrgency, ElementName=TaskOverview,
+                                            Converter={StaticResource BoolToVisibilityConverter}}"
+                                           HorizontalAlignment="Right" ToolTip="Urgency">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Urgency}"  Value="High">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/UrgencyHigh_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Unknown">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/UrgencyNormal_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Low">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/UrgencyLow_16x.png"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                    <Image Name="Annoyance" Height="12"
+                                           Visibility="{Binding DataContext.IconsSettings.ShowAnnoyance, ElementName=TaskOverview,
+                                            Converter={StaticResource BoolToVisibilityConverter}}"
+                                           HorizontalAlignment="Right" ToolTip="Annoyance">
+                                        <Image.Style>
+                                            <Style TargetType="Image">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="High">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceHigh_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Unknown">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceNormal_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Low">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceLow_16x.png"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Image.Style>
+                                    </Image>
+                                    <TextBlock Margin="2"
+                                                   Text="{Binding Title}"/>
+                                    <TextBlock Text="{Binding Description}" Margin="10 2 2 2">
+                                        <TextBlock.Style>
+                                            <Style TargetType="{x:Type TextBlock}">
+                                                <Style.Setters>
+                                                    <Setter Property="Foreground" Value="Gray" />
+                                                </Style.Setters>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </HierarchicalDataTemplate>
+                        </TreeView.Resources>
+                    </TreeView>
+                </TabItem>
+            </TabControl>
+        </DockPanel>
+    </Grid>
+</UserControl>
+
