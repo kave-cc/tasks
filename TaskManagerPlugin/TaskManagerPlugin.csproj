@@ -327,6 +327,7 @@
     <Compile Include="Events\TaskMovedEventArgs.cs" />
     <Compile Include="Util\MinutesToDurationConverter.cs" />
     <Compile Include="Util\PersistenceConstants.cs" />
+    <Compile Include="Util\TimespanToStringConverter.cs" />
     <Compile Include="Util\TrulyObservableCollection.cs" />
   </ItemGroup>
   <ItemGroup>

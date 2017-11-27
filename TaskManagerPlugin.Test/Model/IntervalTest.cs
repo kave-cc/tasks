@@ -26,21 +26,22 @@ namespace TaskManagerPlugin.Test.Model
     [TestClass]
     public class IntervalTest
     {
+
         [TestMethod]
-        public void WhenIsActive_ShouldTakeDifferenceToNow()
+        public void WhenIsActive_ShouldCalculateTimeSpanToNow()
         {
             var interval = new Interval
             {
                 StartTime = DateTimeOffset.Now.AddMinutes(-10)
             };
 
-            int duration = interval.GetDurationInMinutes();
-
-            Assert.AreEqual(10, duration);
+            var timeSpan = interval.GetTimeSpan();
+            var expected = new TimeSpan(0, 0, 10, 0);
+            Assert.AreEqual(expected, timeSpan);
         }
 
         [TestMethod]
-        public void WhenIsClosed_ShouldCalculateInterval()
+        public void WhenIsClosed_ShouldCalculateIntervalAsTimeSpan()
         {
             var interval = new Interval()
             {
@@ -48,9 +49,9 @@ namespace TaskManagerPlugin.Test.Model
                 EndTime = DateTimeOffset.Now.AddMinutes(10)
             };
 
-            int duration = interval.GetDurationInMinutes();
-
-            Assert.AreEqual(10, duration);
+            var timeSpan = interval.GetTimeSpan();
+            var expected = new TimeSpan(0, 0, 10, 0);
+            Assert.AreEqual(expected, timeSpan);
         }
 
         [TestMethod]
@@ -58,9 +59,10 @@ namespace TaskManagerPlugin.Test.Model
         {
             var interval = new Interval();
 
-            int duration = interval.GetDurationInMinutes();
+            var actual = interval.GetTimeSpan();
+            var expected = new TimeSpan(0);
 
-            Assert.AreEqual(0, duration);
+            Assert.AreEqual(expected, actual);
         }
     }
 }

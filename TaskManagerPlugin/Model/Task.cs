@@ -97,7 +97,7 @@ namespace TaskManagerPlugin.Model
         }
 
         [JsonIgnore]
-        public int Duration => CalculateDurationInMinutes();
+        public TimeSpan TimeSpan => CalculateTotalTimeSpan();
 
         public void Close()
         {
@@ -150,20 +150,21 @@ namespace TaskManagerPlugin.Model
             }
         }
 
-        public int CalculateDurationInMinutes()
+        public TimeSpan CalculateTotalTimeSpan()
         {
-            var duration = 0;
+            var timeSpan = new TimeSpan(0);
+
             Intervals.ForEach(interval =>
             {
-                duration += interval.GetDurationInMinutes();
+                timeSpan += interval.GetTimeSpan();
             });
 
             SubTasks.ForEach(task =>
             {
-                duration += task.Duration;
+                timeSpan += task.CalculateTotalTimeSpan();
             });
 
-            return duration;
+            return timeSpan;
         }
 
         public bool IsParentOf(Task task)

@@ -294,8 +294,10 @@
     <Compile Include="UserControls\NavigationControl\MenuBarTest.cs" />
     <Compile Include="Repository\TaskRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UserControls\TaskDetail\TaskDetailControlTest.cs" />
     <Compile Include="UserControls\TaskViewModelTest.cs" />
     <Compile Include="Util\MinutesToDurationConverterTest.cs" />
+    <Compile Include="Util\TimespanToStringConverterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

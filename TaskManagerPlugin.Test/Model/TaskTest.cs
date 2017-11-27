@@ -40,9 +40,10 @@ namespace TaskManagerPlugin.Test.Model
 
             task.SubTasks.Add(subTask);
 
-            int duration = task.Duration;
+            var actual = task.TimeSpan;
+            var expected = new TimeSpan(0, 20, 0);
 
-            Assert.AreEqual(20, duration);
+            Assert.AreEqual(expected, actual);
         }
     }
 }

@@ -26,7 +26,7 @@ limitations under the License.
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
         <converter:PrettyDateConverter x:Key="DateConverter"/>
-        <util:MinutesToDurationConverter x:Key="DurationConverter" /> 
+        <util:TimeSpanToStringConverter x:Key="TimeSpanConverter" />
         <Image x:Key="ExpandIcon" Source="../../Resources/Icons/Expand_16x.png" Width="16" Height="16" x:Shared="False"/>
         <Image x:Key="ShowIcon" Source="../../Resources/Icons/Expand_16x.png" Width="16" Height="16"/>
     </UserControl.Resources>
@@ -130,7 +130,7 @@ limitations under the License.
                     <DataTemplate DataType="model:Task">
                         <DockPanel>
                             <TextBlock Name="Title" Text="{Binding Title}" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       TextAlignment="Right" PreviewMouseDown="Show_Click" Foreground="Blue" TextDecorations="Underline"/>
+                                       TextAlignment="Right" Foreground="Blue"/>
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
@@ -142,7 +142,7 @@ limitations under the License.
                             <Label Content="Parent" Target="{Binding ParentTask}" FontWeight="Bold"
                                    Visibility="{Binding ShowParentTask, Converter={StaticResource BoolToVisibility}}"/>
                             <TextBlock Name="Title" Text="{Binding Title}" HorizontalAlignment="Right" VerticalAlignment="Center"
-                                       TextAlignment="Right" PreviewMouseDown="Show_Click" Foreground="Blue" TextDecorations="Underline"/>
+                                       TextAlignment="Right" Foreground="Blue"/>
                         </DockPanel>
                     </DataTemplate>
                 </ContentControl.ContentTemplate>
@@ -150,7 +150,7 @@ limitations under the License.
             <DockPanel>
                 <Label Content="Time used: " FontWeight="Bold" Target="{Binding ElementName=ActiveTime}"/>
                 <TextBlock VerticalAlignment="Center" HorizontalAlignment="Right"
-                           Name="ActiveTime" Text="{Binding Task.Duration, Converter={StaticResource DurationConverter}}"/>
+                           Name="ActiveTime" Text="{Binding Task.TimeSpan, Converter={StaticResource TimeSpanConverter}}"/>
             </DockPanel>
         </StackPanel>
     </Border>

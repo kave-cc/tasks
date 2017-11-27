@@ -30,8 +30,8 @@ namespace TaskManagerPlugin.UserControls.ActiveTask
     /// </summary>
     public partial class ActiveTaskWindow
     {
-        private readonly TaskViewModel _viewModel;
         private readonly Timer _timer;
+        private readonly TaskViewModel _viewModel;
 
         public ActiveTaskWindow(TaskViewModel viewModel)
         {
@@ -39,7 +39,7 @@ namespace TaskManagerPlugin.UserControls.ActiveTask
             _viewModel.PropertyChanged += OnPropertyChanged;
             DataContext = _viewModel;
 
-            _timer = new Timer(60000);
+            _timer = new Timer(1000);
             _timer.Elapsed += RefreshActiveTime;
 
             InitializeComponent();
@@ -48,14 +48,16 @@ namespace TaskManagerPlugin.UserControls.ActiveTask
 
         private void RefreshActiveTime(object sender, ElapsedEventArgs e)
         {
-            this.Dispatcher.Invoke( () => 
+            Dispatcher.Invoke(() =>
                 ActiveTime.GetBindingExpression(TextBlock.TextProperty).UpdateTarget());
         }
 
         private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (!e.PropertyName.Equals("ActiveTask")) return;
+
             StopTimer();
-            if (e.PropertyName.Equals("ActiveTask") && _viewModel.ActiveTask != null)
+            if (_viewModel.ActiveTask != null)
                 RestartTimer();
         }
 

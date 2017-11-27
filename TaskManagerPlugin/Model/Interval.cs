@@ -36,25 +36,26 @@ namespace TaskManagerPlugin.Model
             set => SetField(ref _endTime, value);
         }
 
-        public int GetDurationInMinutes()
-        {
-            if (IsClosed)
-            {
-                return (EndTime
-                        - StartTime).Minutes;
-            }
-            if (IsActive)
-            {
-                return (DateTimeOffset.Now
-                        - StartTime).Minutes;
-            }
-
-            return 0;
-        }
-
         public bool IsActive => StartTime != DateTimeOffset.MinValue && EndTime == DateTimeOffset.MinValue;
         public bool IsClosed => StartTime != DateTimeOffset.MinValue && EndTime != DateTimeOffset.MinValue;
 
+        public TimeSpan GetTimeSpan()
+        {
+            if (IsClosed)
+            {
+                return EndTime
+                        - StartTime;
+            }
+
+            if (IsActive)
+            {
+                return DateTimeOffset.Now
+                        - StartTime;
+            }
+
+            return new TimeSpan(0);
+        }
+        
         public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]

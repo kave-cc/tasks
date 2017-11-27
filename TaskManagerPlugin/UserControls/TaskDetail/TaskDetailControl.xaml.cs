@@ -35,14 +35,9 @@ namespace TaskManagerPlugin.UserControls.TaskDetail
 
         public TaskDetailControl(Task task)
         {
-            InitializeComponent();
             _dataContext = new TaskDetailContext(task);
             DataContext = _dataContext;
-        }
-
-        private void Show_Click(object sender, RoutedEventArgs e)
-        {
-
+            InitializeComponent();
         }
 
         public event ControlClosedHandler ControlClosed;

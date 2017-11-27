@@ -65,5 +65,20 @@ namespace TaskManagerPlugin.Test.UserControls.ActiveTask
 
             Assert.AreEqual(_repository.GetOpenTasks()[0], _viewModel.ActiveTask);
         }
+
+        [TestMethod]
+        public void WhenActiveTaskExists_ShouldDisplayTimeSpan()
+        {
+            var task = new Task() {Title = "Title"};
+            _repository.AddTask(task);
+            task.Intervals.Add(new Interval
+            {
+                StartTime = DateTimeOffset.Now.AddMinutes(-10),
+                EndTime = DateTimeOffset.Now
+            });
+            _viewModel.ActivateTask(task);
+
+            Assert.AreEqual("Active Time: 10 minutes", _window.ActiveTime.Text);
+        }
     }
 }

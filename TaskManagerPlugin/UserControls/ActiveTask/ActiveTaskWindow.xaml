@@ -25,7 +25,7 @@ limitations under the License.
     <UserControl.Resources>
         <activeTask:NullToVisiblityConverter x:Key="NullConverter"/>
         <activeTask:StandardDateToVisiblityConverter x:Key="StandardDateConverter"/>
-        <util:MinutesToDurationConverter x:Key="DurationConverter"/>
+        <util:TimeSpanToStringConverter x:Key="TimeSpanConverter"/>
         <BitmapImage x:Key="Run" UriSource="../../Resources/Icons/Run_16x.png"/>
         <BitmapImage x:Key="Close" UriSource="../../Resources/Icons/TaskComplete_16x.PNG"/>
         <BitmapImage x:Key="Pause" UriSource="../../Resources/Icons/TaskPause_16x.png"/>
@@ -84,7 +84,7 @@ limitations under the License.
                     </Style>
                 </StackPanel.Resources>
                 <TextBlock Margin="0,5,0,5" Name="ActiveTime"
-                           Text="{Binding ActiveTask.Duration, Converter={StaticResource DurationConverter}, StringFormat='Active Time: {0}'}"/>
+                           Text="{Binding ActiveTask.TimeSpan, Converter={StaticResource TimeSpanConverter}, StringFormat='Active Time: {0}'}"/>
             </StackPanel>
             <Grid Grid.Row="3" Margin="0,5,0,5" HorizontalAlignment="Stretch">
                 <Grid.ColumnDefinitions>
