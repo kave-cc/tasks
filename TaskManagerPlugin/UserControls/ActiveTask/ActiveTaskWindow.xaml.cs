@@ -13,8 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
+
 using System;
+using System.ComponentModel;
 using System.Globalization;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -23,18 +26,48 @@ using TaskManagerPlugin.Model;
 namespace TaskManagerPlugin.UserControls.ActiveTask
 {
     /// <summary>
-    /// Interaction logic for ActiveTaskWindow.xaml
+    ///     Interaction logic for ActiveTaskWindow.xaml
     /// </summary>
     public partial class ActiveTaskWindow
     {
         private readonly TaskViewModel _viewModel;
+        private readonly Timer _timer;
 
         public ActiveTaskWindow(TaskViewModel viewModel)
         {
-            this._viewModel = viewModel;
+            _viewModel = viewModel;
+            _viewModel.PropertyChanged += OnPropertyChanged;
             DataContext = _viewModel;
 
+            _timer = new Timer(60000);
+            _timer.Elapsed += RefreshActiveTime;
+
             InitializeComponent();
+            RestartTimer();
+        }
+
+        private void RefreshActiveTime(object sender, ElapsedEventArgs e)
+        {
+            this.Dispatcher.Invoke( () => 
+                ActiveTime.GetBindingExpression(TextBlock.TextProperty).UpdateTarget());
+        }
+
+        private void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            StopTimer();
+            if (e.PropertyName.Equals("ActiveTask") && _viewModel.ActiveTask != null)
+                RestartTimer();
+        }
+
+        private void StopTimer()
+        {
+            _timer.Stop();
+        }
+
+        private void RestartTimer()
+        {
+            StopTimer();
+            _timer.Start();
         }
 
         private void CloseTask_Click(object sender, EventArgs e)
@@ -52,9 +85,7 @@ namespace TaskManagerPlugin.UserControls.ActiveTask
             var selectedTask = OpenTasksCombo.SelectedItem as Task;
 
             if (selectedTask != null)
-            {
                 _viewModel.ActivateTask(selectedTask);
-            }
         }
 
         private void Pause_Click(object sender, RoutedEventArgs e)
@@ -72,9 +103,11 @@ namespace TaskManagerPlugin.UserControls.ActiveTask
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            bool inverse = parameter != null && (bool)parameter;
-            return (value != null && !inverse ||
-                    value == null && inverse) ? Visibility.Visible : Visibility.Collapsed;
+            var inverse = parameter != null && (bool) parameter;
+            return value != null && !inverse ||
+                   value == null && inverse
+                ? Visibility.Visible
+                : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -87,7 +120,7 @@ namespace TaskManagerPlugin.UserControls.ActiveTask
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            DateTimeOffset date = (DateTimeOffset) value;
+            var date = (DateTimeOffset) value;
             return date == DateTimeOffset.MinValue ? Visibility.Collapsed : Visibility.Visible;
         }
 
