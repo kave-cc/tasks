@@ -13,63 +13,64 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
+
 using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using JetBrains.DataFlow;
+using JetBrains.UI.Wpf.DragDrop.Utilities;
 using TaskManagerPlugin.Model;
-using TaskManagerPlugin.UserControls.EditTask;
 using TaskManagerPlugin.UserControls.NavigationControl;
-using TaskManagerPlugin.UserControls.TaskDetail;
 
 namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
 {
     /// <summary>
-    /// Interaction logic for TaskOverviewControl.xaml
+    ///     Interaction logic for TaskOverviewControl.xaml
     /// </summary>
     public partial class TaskOverviewControl : IControlClosed
     {
-        private readonly Lifetime _lifetime;
-        private bool _openTabSelected = true;
-        private TextBlock _lastSelectedTextBlock;
-        private Task SelectedTask => _openTabSelected ? (Task) OpenTasks.SelectedItem : (Task) ClosedTasks.SelectedItem;
-        private string _textBoxCache = "";
-        private Task _editTask;
-        private bool Editing => _editTask != null;
-        private readonly TaskViewModel _viewModel;
-
-        public event SelectedTaskChangedHandler SelectedTaskChanged;
-        public event TaskDoubleClickedHandler TaskDoubleClicked;
-        public event ControlClosedHandler ControlClosed;
-        public event TaskRightClickedHandler TaskRightClicked;
-
         public delegate void SelectedTaskChangedHandler(Task task);
-
-        public delegate void TaskRightClickedHandler(object sender, MouseButtonEventArgs args);
 
         public delegate void TaskDoubleClickedHandler(Task task);
 
-        public TaskOverviewControl(TaskViewModel viewModel)
-        {
-            try
-            {
-                InitializeComponent();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-            }
+        public delegate void TaskRightClickedHandler(object sender, MouseButtonEventArgs args);
 
+        private readonly Lifetime _lifetime;
+        private readonly TaskViewModel _viewModel;
+        private Task _editTask;
+        private TextBlock _lastSelectedTextBlock;
+        private bool _openTabSelected = true;
+        private string _textBoxCache = "";
+
+        public TaskOverviewControl(TaskViewModel viewModel, MainNavigationControl navigation = null)
+        {
             _viewModel = viewModel;
             _lifetime = _viewModel.Lifetime;
             DataContext = _viewModel;
-            _viewModel.PropertyChanged += this.RefreshList;
+            _viewModel.PropertyChanged += RefreshList;
+
+            if (navigation != null)
+                navigation.CreateTaskRequested += CreateTaskRequested;
+
+            InitializeComponent();
         }
 
-        void RefreshList(object sender, EventArgs e)
+        private Task SelectedTask => _openTabSelected ? (Task) OpenTasks.SelectedItem : (Task) ClosedTasks.SelectedItem;
+        private bool Editing => _editTask != null;
+        public event ControlClosedHandler ControlClosed;
+
+        public event SelectedTaskChangedHandler SelectedTaskChanged;
+        public event TaskDoubleClickedHandler TaskDoubleClicked;
+        public event TaskRightClickedHandler TaskRightClicked;
+
+        private void CreateTaskRequested()
+        {
+            _viewModel.AddTask(new Task {Title = "New Task"});
+        }
+
+        private void RefreshList(object sender, EventArgs e)
         {
             OpenTasks.Items.Refresh();
             OnSelectedTaskChanged(SelectedTask);
@@ -152,20 +153,16 @@ namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
 
         private void EmitChangeEvent(TextBox textBox)
         {
-            bool textWasChanged = textBox.Text != _textBoxCache;
+            var textWasChanged = textBox.Text != _textBoxCache;
             if (!textWasChanged) return;
 
             var newVersion = _editTask;
-            bool isTitleBox = textBox.Name == "Title";
+            var isTitleBox = textBox.Name == "Title";
             var oldVersion = (Task) newVersion.Clone();
             if (isTitleBox)
-            {
                 oldVersion.Title = _textBoxCache;
-            }
             else
-            {
                 oldVersion.Description = _textBoxCache;
-            }
 
             _viewModel.OnTaskEdited(oldVersion, newVersion);
         }
@@ -199,14 +196,12 @@ namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
 
         private void MoveFocusToFocusableParent(TextBox textBox)
         {
-            FrameworkElement parent = (FrameworkElement)textBox.Parent;
-            while (parent != null && parent is IInputElement && !((IInputElement)parent).Focusable)
-            {
-                parent = (FrameworkElement)parent.Parent;
-            }
+            var parent = (FrameworkElement) textBox.Parent;
+            while (parent != null && parent is IInputElement && !((IInputElement) parent).Focusable)
+                parent = (FrameworkElement) parent.Parent;
 
-            DependencyObject scope = FocusManager.GetFocusScope(textBox);
-            FocusManager.SetFocusedElement(scope, parent as IInputElement);
+            var scope = FocusManager.GetFocusScope(textBox);
+            FocusManager.SetFocusedElement(scope, parent);
         }
 
         private void TextBox_KeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)

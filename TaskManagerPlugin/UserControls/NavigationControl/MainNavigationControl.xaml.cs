@@ -54,12 +54,15 @@ namespace TaskManagerPlugin.UserControls.NavigationControl
         private int _currentIndex = 0;
         private readonly MenuContext _menuContext;
         private readonly TaskContextMenu _contextMenu;
-        private readonly IIconsSettingsRepository _settingsRepository;
-        private readonly IconsSettings _iconsSettings;
+
+        public MenuBar Menu;
+        public TaskOverviewControl TaskOverviewControl;
 
         public event TaskOverviewControl.SelectedTaskChangedHandler SelectedTaskChanged;
+        public event CreateTaskRequestedHandler CreateTaskRequested;
 
         public delegate void ContentChangedHandler(List<IControlClosed> controls, int currentIndex);
+        public delegate void CreateTaskRequestedHandler();
 
 
         public MainNavigationControl(TaskViewModel taskViewModel)
@@ -68,18 +71,18 @@ namespace TaskManagerPlugin.UserControls.NavigationControl
             _controls = new List<IControlClosed>();
             _menuContext = new MenuContext();
 
-            var menuBar = new MenuBar(_menuContext);
-            menuBar.MenuItemClicked += MenuItemClicked;
-            MenuBar.Content = menuBar;
+            Menu = new MenuBar(_menuContext);
+            Menu.MenuItemClicked += MenuItemClicked;
+            MenuBar.Content = Menu;
 
             _contextMenu = new TaskContextMenu(_menuContext);
             _contextMenu.MenuItemClicked += MenuItemClicked;
 
-            var taskOverviewControl = new TaskOverviewControl(taskViewModel);
-            taskOverviewControl.SelectedTaskChanged += UpdateSelectedTask;
-            taskOverviewControl.TaskDoubleClicked += ShowTaskDetails;
-            taskOverviewControl.TaskRightClicked += TaskRightClicked;
-            InsertAndShowControl(taskOverviewControl);
+            TaskOverviewControl = new TaskOverviewControl(taskViewModel, this);
+            TaskOverviewControl.SelectedTaskChanged += UpdateSelectedTask;
+            TaskOverviewControl.TaskDoubleClicked += ShowTaskDetails;
+            TaskOverviewControl.TaskRightClicked += TaskRightClicked;
+            InsertAndShowControl(TaskOverviewControl);
 
             _lifetime = taskViewModel.Lifetime;
             _taskViewModel = taskViewModel;
@@ -126,7 +129,7 @@ namespace TaskManagerPlugin.UserControls.NavigationControl
             switch (name)
             {
                 case "MenuItemAdd":
-                    InsertAndShowControl(new TaskEditControl(_taskViewModel));
+                    OnCreateTaskRequested();
                     break;
                 case "MenuItemMoveUp":
                     _taskViewModel.IncreasePriority(_selectedTask);
@@ -234,6 +237,11 @@ namespace TaskManagerPlugin.UserControls.NavigationControl
         protected virtual void OnSelectedTaskChanged(Task task)
         {
             SelectedTaskChanged?.Invoke(task);
+        }
+
+        protected virtual void OnCreateTaskRequested()
+        {
+            CreateTaskRequested?.Invoke();
         }
     }
 

@@ -35,7 +35,7 @@ namespace TaskManagerPlugin.UserControls
     [ShellComponent]
     public class TaskViewModel : INotifyPropertyChanged
     {
-        private readonly TaskRepository _repository;
+        private readonly ITaskRepository _repository;
         private IIconsSettingsRepository _settingsRepository;
         public IconsSettings IconsSettings { get; set; }
         public readonly Lifetime Lifetime;
@@ -48,7 +48,7 @@ namespace TaskManagerPlugin.UserControls
         public event TaskChangeHandler TaskChange;
         public delegate void TaskChangeHandler(object sender, TaskEventArgs args);
         
-        public TaskViewModel(TaskRepository repository, Lifetime lifetime, IIconsSettingsRepository settingsRepository, TaskEventGenerator generator = null)
+        public TaskViewModel(ITaskRepository repository, Lifetime lifetime, IIconsSettingsRepository settingsRepository, TaskEventGenerator generator = null)
         {
             if (generator != null)
             {
