@@ -72,14 +72,20 @@
                                             <Image.Style>
                                                 <Style TargetType="Image">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Importance}"  Value="Low">
+                                                        <DataTrigger Binding="{Binding Importance}"  Value="Positive2">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/ImportanceVeryHigh_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Importance}"  Value="Positive1">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/ImportanceHigh_16x.png"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Importance}"  Value="Unknown">
+                                                        <DataTrigger Binding="{Binding Importance}"  Value="Neutral">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/ImportanceNormal_16x.png"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Importance}"  Value="High">
+                                                        <DataTrigger Binding="{Binding Importance}"  Value="Negative1">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/ImportanceLow_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Importance}"  Value="Negative2">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/ImportanceVeryLow_16x.png"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -92,14 +98,20 @@
                                             <Image.Style>
                                                 <Style TargetType="Image">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Low">
+                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Positive2">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/UrgencyVeryHigh_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Positive1">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/UrgencyHigh_16x.png"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Unknown">
+                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Neutral">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/UrgencyNormal_16x.png"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Urgency}"  Value="High">
+                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Negative1">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/UrgencyLow_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Urgency}"  Value="Negative2">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/UrgencyVeryLow_16x.png"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -112,14 +124,20 @@
                                             <Image.Style>
                                                 <Style TargetType="Image">
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="High">
+                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Positive2">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceVeryHigh_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Positive1">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceHigh_16x.png"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Unknown">
+                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Neutral">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceNormal_16x.png"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Low">
+                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Negative1">
                                                             <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceLow_16x.png"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding Annoyance}"  Value="Negative2">
+                                                            <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceVeryLow_16x.png"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
@@ -190,14 +208,20 @@
                                         <Image.Style>
                                             <Style TargetType="Image">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Importance}"  Value="High">
+                                                    <DataTrigger Binding="{Binding Importance}"  Value="Positive2">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/ImportanceVeryHigh_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Importance}"  Value="Positive1">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/ImportanceHigh_16x.png"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Importance}"  Value="Unknown">
+                                                    <DataTrigger Binding="{Binding Importance}"  Value="Neutral">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/ImportanceNormal_16x.png"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Importance}"  Value="Low">
+                                                    <DataTrigger Binding="{Binding Importance}"  Value="Negative1">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/ImportanceLow_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Importance}"  Value="Negative2">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/ImportanceVeryLow_16x.png"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -210,14 +234,20 @@
                                         <Image.Style>
                                             <Style TargetType="Image">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Urgency}"  Value="High">
+                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Positive2">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/UrgencyVeryHigh_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Positive1">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/UrgencyHigh_16x.png"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Unknown">
+                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Neutral">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/UrgencyNormal_16x.png"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Low">
+                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Negative1">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/UrgencyLow_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Urgency}"  Value="Negative2">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/UrgencyVeryLow_16x.png"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
@@ -230,14 +260,20 @@
                                         <Image.Style>
                                             <Style TargetType="Image">
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="High">
+                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Positive2">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceVeryHigh_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Positive1">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceHigh_16x.png"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Unknown">
+                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Neutral">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceNormal_16x.png"/>
                                                     </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Low">
+                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Negative1">
                                                         <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceLow_16x.png"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Annoyance}"  Value="Negative2">
+                                                        <Setter Property="Source" Value="../../../Resources/Icons/AnnoyanceVeryLow_16x.png"/>
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
