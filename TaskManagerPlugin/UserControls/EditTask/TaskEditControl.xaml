@@ -20,6 +20,7 @@ limitations under the License.
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:model="clr-namespace:TaskManagerPlugin.Model"
              xmlns:enums="clr-namespace:KaVE.Commons.Model.Events.Enums;assembly=KaVE.Commons"
+             xmlns:util="clr-namespace:TaskManagerPlugin.Util"
              mc:Ignorable="d"
              d:DesignWidth="300"
              HorizontalAlignment="Stretch"
@@ -31,6 +32,7 @@ limitations under the License.
                 <x:Type TypeName="enums:Likert5Point"/>
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <util:LikertToStringConverter x:Key="LikertConverter"/>
     </UserControl.Resources>
     <StackPanel Margin="3" Name="Panel">
         <Label Content="Title" Target="{Binding ElementName=TaskTitle}"/>
@@ -42,15 +44,33 @@ limitations under the License.
 
         <Label Content="Urgency" Target="{Binding ElementName=Urgency}"/>
         <ComboBox Name="Urgency" SelectedValue="{Binding Urgency, UpdateSourceTrigger=Explicit}"
-                  ItemsSource="{Binding Source={StaticResource Likert5Enum}}"/>
+                  ItemsSource="{Binding Source={StaticResource Likert5Enum}}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource LikertConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <Label Content="Importance" Target="{Binding ElementName=Importance}"/>
         <ComboBox Name="Importance" SelectedValue="{Binding Importance, UpdateSourceTrigger=Explicit}"
-                  ItemsSource="{Binding Source={StaticResource Likert5Enum}}"/>
+                  ItemsSource="{Binding Source={StaticResource Likert5Enum}}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource LikertConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <Label Content="Annoyance" Target="{Binding ElementName=Annoyance}"/>
         <ComboBox Name="Annoyance" SelectedValue="{Binding Annoyance, UpdateSourceTrigger=Explicit}"
-                  ItemsSource="{Binding Source={StaticResource Likert5Enum}}"/>
+                  ItemsSource="{Binding Source={StaticResource Likert5Enum}}">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding Converter={StaticResource LikertConverter}}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
 
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
             <Button Content="Save" Click="BtnSave_Click" Margin="0,0,10,0"/>
