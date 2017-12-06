@@ -80,7 +80,7 @@ namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
         private void Tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             OnSelectedTaskChanged(SelectedTask);
-            if (!Equals(e.NewValue, _lastSelectedTextBlock.DataContext))
+            if (!Equals(e.NewValue, _lastSelectedTextBlock?.DataContext))
             {
                 _lastSelectedTextBlock = null;
             }
