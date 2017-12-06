@@ -11,6 +11,8 @@
         mc:Ignorable="d">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <util:SingleLineConverter x:Key="SingleLineConverter"/>
+        
         <BitmapImage x:Key="ImportanceHighIcon" UriSource="../../../Resources/Icons/ImportanceHigh_16x.png"/>
         <BitmapImage x:Key="MoveToBranch" UriSource="../../../Resources/Icons/MoveToBranch_x16.png"/>
         <BitmapImage x:Key="MoveToSubBranch" UriSource="../../../Resources/Icons/MoveToSubBranch_x16.png"/>
@@ -144,7 +146,7 @@
                                             </Image.Style>
                                         </Image>
                                         <StackPanel>
-                                            <TextBlock Focusable="True" Text="{Binding Title}" Margin="2 2 2 2">
+                                            <TextBlock Focusable="True" Text="{Binding Title, Converter={StaticResource SingleLineConverter}}" Margin="2 2 2 2">
                                                 <TextBlock.Style>
                                                     <Style TargetType="{x:Type TextBlock}">
                                                         <Style.Triggers>
@@ -166,12 +168,12 @@
                                                      LostFocus="TextBox_LostFocus" KeyDown="TextBox_KeyDown" GotKeyboardFocus="TextBox_KeyboardFocus" MouseDoubleClick="TextBox_DoubleClick"/>
                                         </StackPanel>
                                         <StackPanel>
-                                            <TextBlock Text="{Binding Description}" Margin="10 2 2 2">
+                                            <TextBlock Text="{Binding Description, Converter={StaticResource SingleLineConverter}}" Margin="10 2 2 2">
                                                 <TextBlock.Style>
                                                     <Style TargetType="{x:Type TextBlock}">
                                                         <Style.Setters>
                                                             <Setter Property="Foreground" Value="Gray" />
-                                                            <Setter Property="TextWrapping" Value="Wrap"/>
+                                                            <Setter Property="TextWrapping" Value="NoWrap"/>
                                                             <EventSetter Event="MouseLeftButtonDown" Handler="TextBox_Click" />
                                                         </Style.Setters>
                                                     </Style>

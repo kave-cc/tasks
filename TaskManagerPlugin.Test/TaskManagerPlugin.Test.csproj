@@ -298,6 +298,7 @@
     <Compile Include="UserControls\TaskViewModelTest.cs" />
     <Compile Include="Util\LikertToStringConverterTest.cs" />
     <Compile Include="Util\MinutesToDurationConverterTest.cs" />
+    <Compile Include="Util\SingleLineConverterTest.cs" />
     <Compile Include="Util\TimespanToStringConverterTest.cs" />
   </ItemGroup>
   <ItemGroup>

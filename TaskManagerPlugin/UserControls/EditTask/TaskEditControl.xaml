@@ -36,10 +36,11 @@ limitations under the License.
     </UserControl.Resources>
     <StackPanel Margin="3" Name="Panel">
         <Label Content="Title" Target="{Binding ElementName=TaskTitle}"/>
-        <TextBox Name="TaskTitle" Text="{Binding Title, UpdateSourceTrigger=Explicit}"/>
+        <TextBox Name="TaskTitle" Text="{Binding Title, UpdateSourceTrigger=Explicit}" MaxLength="80"/>
         
         <Label Content="Description" Target="{Binding ElementName=Description}"/>
-        <TextBox Name="Description" MinLines="4" VerticalAlignment="Stretch" MinHeight="100" 
+        <TextBox Name="Description" MinLines="4" AcceptsReturn="True" TextWrapping="Wrap" 
+                 VerticalAlignment="Stretch" MinHeight="100" 
                  Text="{Binding Description, UpdateSourceTrigger=Explicit}"/>
 
         <Label Content="Urgency" Target="{Binding ElementName=Urgency}"/>
