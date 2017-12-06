@@ -44,6 +44,15 @@ namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
         private bool _openTabSelected = true;
         private string _textBoxCache = "";
 
+        private Task SelectedTask => _openTabSelected ? (Task)OpenTasks.SelectedItem : (Task)ClosedTasks.SelectedItem;
+        private bool Editing => _editTask != null;
+        public event ControlClosedHandler ControlClosed;
+
+        public event SelectedTaskChangedHandler SelectedTaskChanged;
+        public event TaskDoubleClickedHandler TaskDoubleClicked;
+        public event TaskRightClickedHandler TaskRightClicked;
+
+
         public TaskOverviewControl(TaskViewModel viewModel, MainNavigationControl navigation = null)
         {
             _viewModel = viewModel;
@@ -56,14 +65,6 @@ namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
 
             InitializeComponent();
         }
-
-        private Task SelectedTask => _openTabSelected ? (Task) OpenTasks.SelectedItem : (Task) ClosedTasks.SelectedItem;
-        private bool Editing => _editTask != null;
-        public event ControlClosedHandler ControlClosed;
-
-        public event SelectedTaskChangedHandler SelectedTaskChanged;
-        public event TaskDoubleClickedHandler TaskDoubleClicked;
-        public event TaskRightClickedHandler TaskRightClicked;
 
         private void CreateTaskRequested()
         {
@@ -79,6 +80,10 @@ namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
         private void Tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
             OnSelectedTaskChanged(SelectedTask);
+            if (!Equals(e.NewValue, _lastSelectedTextBlock.DataContext))
+            {
+                _lastSelectedTextBlock = null;
+            }
         }
 
         private void OverviewTabControl_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -125,7 +130,7 @@ namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
         private void TextBox_Click(object sender, MouseButtonEventArgs e)
         {
             var textBlock = sender as TextBlock;
-            if (textBlock == _lastSelectedTextBlock)
+            if (Equals(textBlock, _lastSelectedTextBlock))
             {
                 var parent = textBlock.Parent as StackPanel;
                 var textBox = parent?.Children.OfType<TextBox>().FirstOrDefault();
