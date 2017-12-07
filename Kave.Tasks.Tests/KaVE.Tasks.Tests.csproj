@@ -305,7 +305,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TaskManagerPlugin\KaVE.Tasks.csproj">
+    <ProjectReference Include="..\KaVE.Tasks\KaVE.Tasks.csproj">
       <Project>{4304740e-cebd-4584-9e13-6c5dffdd8a71}</Project>
       <Name>KaVE.Tasks</Name>
     </ProjectReference>

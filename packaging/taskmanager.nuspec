@@ -2,7 +2,7 @@
 <package>
 
     <metadata>
-        <id>NicoSB.TaskManager</id>
+        <id>KaVE.Tasks</id>
         <version>0.0.1</version>
         <authors>Nico Strebel</authors>
         <owners>Nico Strebel</owners>
@@ -17,8 +17,8 @@
     </metadata>
 
     <files>
-        <file src="../TaskManagerPlugin/bin/Debug/TaskManagerPlugin.dll" target="DotFiles" />
-        <file src="../TaskManagerPlugin/bin/Debug/TaskManagerPlugin.pdb" target="DotFiles" />
+        <file src="../KaVE.Tasks/bin/Debug/KaVE.Tasks.dll" target="DotFiles" />
+        <file src="../KaVE.Tasks/bin/Debug/KaVE.Tasks.pdb" target="DotFiles" />
     </files>
 
 </package>

@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 -->
 <UserControl x:Class="KaVE.Tasks.UserControls.TaskDetail.TaskDetailControl"
-             xmlns="   http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="   http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="   http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="   http://schemas.microsoft.com/expression/blend/2008"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:converter="clr-namespace:KaVE.Tasks.UserControls.TaskDetail.Converter"
              xmlns:util="clr-namespace:KaVE.Tasks.Util"
              mc:Ignorable="d"

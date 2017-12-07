@@ -51,7 +51,8 @@ namespace TaskManagerPlugin.Test.Model
 
             var timeSpan = interval.GetTimeSpan();
             var expected = new TimeSpan(0, 0, 10, 0);
-            Assert.AreEqual(expected, timeSpan);
+            Assert.AreEqual(expected.Minutes, timeSpan.Minutes);
+            Assert.AreEqual(expected.Seconds, timeSpan.Seconds);
         }
 
         [TestMethod]

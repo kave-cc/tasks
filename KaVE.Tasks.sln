@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KaVE.Tasks", "TaskManagerPlugin\KaVE.Tasks.csproj", "{4304740E-CEBD-4584-9E13-6C5DFFDD8A71}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KaVE.Tasks", "KaVE.Tasks\KaVE.Tasks.csproj", "{4304740E-CEBD-4584-9E13-6C5DFFDD8A71}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KaVE.Tasks.Tests", "TaskManagerPlugin.Test\KaVE.Tasks.Tests.csproj", "{BDD03F39-38B3-484E-A8F9-10009FF33E7D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KaVE.Tasks.Tests", "KaVE.Tasks.Tests\KaVE.Tasks.Tests.csproj", "{BDD03F39-38B3-484E-A8F9-10009FF33E7D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

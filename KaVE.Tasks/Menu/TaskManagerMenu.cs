@@ -21,10 +21,10 @@ using KaVE.Tasks.UserControls.NavigationControl;
 
 namespace KaVE.Tasks.Menu
 {
-    [ActionGroup(Id, ActionGroupInsertStyles.Submenu, Id = 1934, Text="&TaskManager")]
+    [ActionGroup(Id, ActionGroupInsertStyles.Submenu, Id = 1934, Text="&KaVE.Tasks")]
     public class TaskManagerMenu : IAction, IInsertLast<VsMainMenuGroup>
     {
-        public const string Id = "TaskManager.Menu";
+        public const string Id = "KaVE.Tasks.Menu";
 
         public TaskManagerMenu(MainNavigationWindowAction t,
             ActiveTaskWindowAction a){ }
