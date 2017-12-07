@@ -12,18 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
+
 using JetBrains.Application;
 using JetBrains.Application.BuildScript.Application;
 using JetBrains.UI.ToolWindowManagement;
 
-namespace TaskManagerPlugin.UserControls.ActiveTask
+namespace KaVE.Tasks.UserControls.ActiveTask
 {
     [ToolWindowDescriptor(
             ProductNeutralId = "ActiveTaskWindow",
             Text = "Active Task",
             Type = ToolWindowType.SingleInstance,
-            Icon = typeof(JetBrains.Ide.Resources.IdeThemedIcons.ExportHtml),
+            Icon = typeof(global::JetBrains.Ide.Resources.IdeThemedIcons.ExportHtml),
             VisibilityPersistenceScope = ToolWindowVisibilityPersistenceScope.Global,
             InitialDocking = ToolWindowInitialDocking.Left
         )

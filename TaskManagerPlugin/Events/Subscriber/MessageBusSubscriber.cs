@@ -12,14 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -27,13 +23,11 @@ using Hardcodet.Wpf.TaskbarNotification;
 using JetBrains.Application;
 using KaVE.Commons.Model.Events;
 using KaVE.Commons.Utils;
+using KaVE.Tasks.UserControls;
 using KaVE.VS.Commons;
-using TaskManagerPlugin.Properties;
-using TaskManagerPlugin.Repository;
-using TaskManagerPlugin.UserControls;
 using Timer = System.Timers.Timer;
 
-namespace TaskManagerPlugin.Events.Subscriber
+namespace KaVE.Tasks.Events.Subscriber
 {
     [ShellComponent]
     public class MessageBusSubscriber : IDisposable

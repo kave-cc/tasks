@@ -12,18 +12,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using Appccelerate.StateMachine;
-using JetBrains.Application;
-using JetBrains.Util;
-using TaskManagerPlugin.Model;
+ */
 
-namespace TaskManagerPlugin.UserControls.TaskDetail
+using KaVE.Tasks.Model;
+
+namespace KaVE.Tasks.UserControls.TaskDetail
 {
     /// <summary>
     /// Interaction logic for TaskDetailControl.xaml

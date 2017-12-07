@@ -1,4 +1,4 @@
-﻿/*  
+﻿/*
  * Copyright 2017 Nico Strebel
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,13 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
 using System;
 using System.IO;
 using System.Reflection;
 
-namespace TaskManagerPlugin.Util
+namespace KaVE.Tasks.Util
 {
     internal class PersistenceConstants
     {

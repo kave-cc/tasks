@@ -1,19 +1,24 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\JetBrains.ReSharper.SDK.Tests.2017.1.20170613.162448\build\JetBrains.ReSharper.SDK.Tests.props" Condition="Exists('..\packages\JetBrains.ReSharper.SDK.Tests.2017.1.20170613.162448\build\JetBrains.ReSharper.SDK.Tests.props')" />
+  <Import Project="..\packages\MSTest.TestAdapter.1.1.18\build\net45\MSTest.TestAdapter.props" Condition="Exists('..\packages\MSTest.TestAdapter.1.1.18\build\net45\MSTest.TestAdapter.props')" />
   <PropertyGroup>
-    <Configuration Condition="'$(TasksVariant)' == ''">Development</Configuration>
-  </PropertyGroup>
-  <PropertyGroup>
+    <TasksVariant Condition=" '$(TasksVariant)' == '' ">Development</TasksVariant>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{4304740E-CEBD-4584-9E13-6C5DFFDD8A71}</ProjectGuid>
+    <ProjectGuid>{BDD03F39-38B3-484E-A8F9-10009FF33E7D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TaskManagerPlugin</RootNamespace>
-    <AssemblyName>TaskManagerPlugin</AssemblyName>
+    <RootNamespace>TaskManagerPlugin.Test</RootNamespace>
+    <AssemblyName>TaskManagerPlugin.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">15.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
+    <IsCodedUITest>False</IsCodedUITest>
+    <TestProjectType>UnitTest</TestProjectType>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
   </PropertyGroup>
@@ -47,6 +52,9 @@
     <Reference Include="Appccelerate.StateMachine, Version=2.2.0.0, Culture=neutral, PublicKeyToken=917bca444d1f2b4c, processorArchitecture=MSIL">
       <HintPath>..\packages\Appccelerate.StateMachine.JetBrains.2.2.0.1\lib\net45\Appccelerate.StateMachine.dll</HintPath>
     </Reference>
+    <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Core.4.2.1\lib\net45\Castle.Core.dll</HintPath>
+    </Reference>
     <Reference Include="CookComputing.XmlRpcV2, Version=2.5.0.0, Culture=neutral, PublicKeyToken=a7d6e17aa302004d, processorArchitecture=MSIL">
       <HintPath>..\packages\xmlrpcnet.2.5.0\lib\net20\CookComputing.XmlRpcV2.dll</HintPath>
     </Reference>
@@ -67,9 +75,6 @@
       <HintPath>..\packages\EnvDTE.8.0.1\lib\net10\EnvDTE.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net45\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
-    </Reference>
     <Reference Include="ICSharpCode.SharpZipLib, Version=1.0.6144.33521, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.JetBrains.Stripped.0.87.20161027.6\lib\net40\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
@@ -89,12 +94,16 @@
     <Reference Include="KaVE.Commons, Version=0.0.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\KaVE.Commons.0.0.7\lib\KaVE.Commons.dll</HintPath>
     </Reference>
+    <Reference Include="KaVE.Commons.TestUtils, Version=0.0.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\KaVE.Commons.TestUtils.0.0.7\lib\KaVE.Commons.TestUtils.dll</HintPath>
+    </Reference>
     <Reference Include="KaVE.VS.Commons, Version=0.0.7.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\KaVE.VS.Commons.0.0.7\lib\KaVE.VS.Commons.dll</HintPath>
     </Reference>
     <Reference Include="MahApps.Metro, Version=1.3.0.0, Culture=neutral, PublicKeyToken=f4fb5a3c4d1e5b4f, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.MahApps.Metro.1.3.1\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Deployment.Compression, Version=3.0.0.0, Culture=neutral, PublicKeyToken=ce35f76fcda82bad, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Platform.Lib.Microsoft.Deployment.Compression.Cab.2.0.20140304.0\lib\Microsoft.Deployment.Compression.dll</HintPath>
     </Reference>
@@ -116,11 +125,16 @@
     <Reference Include="Microsoft.Owin.StaticFiles, Version=3.0.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Owin.StaticFiles.3.0.1\lib\net45\Microsoft.Owin.StaticFiles.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.CommandBars, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>..\packages\Microsoft.VisualStudio.CommandBars.8.0.0.0\lib\Microsoft.VisualStudio.CommandBars.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MSTest.TestFramework.1.1.18\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\MSTest.TestFramework.1.1.18\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Web.XmlTransform, Version=2.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Web.Xdt.2.1.1\lib\net40\Microsoft.Web.XmlTransform.dll</HintPath>
@@ -131,8 +145,11 @@
     <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Windows7APICodePack.JetBrains.Stripped.1.1.20150225.0\lib\Net\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
+    <Reference Include="Moq, Version=4.7.142.0, Culture=neutral, PublicKeyToken=69f491c39445e920, processorArchitecture=MSIL">
+      <HintPath>..\packages\Moq.4.7.142\lib\net45\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft35.Json.7.0.1\lib\net35\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="NuGet.Client, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5aaa11a165479571, processorArchitecture=MSIL">
@@ -231,25 +248,22 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Platform.Lib.System.Windows.Interactivity.3.0.40218\lib\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xaml" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="Vestris.ResourceLib, Version=1.4.33.0, Culture=neutral, PublicKeyToken=ec632d8ba5e5750d, processorArchitecture=MSIL">
       <HintPath>..\packages\Vestris.ResourceLib.JetBrains.1.4.20150303.0\lib\Net\Vestris.ResourceLib.dll</HintPath>
     </Reference>
@@ -268,200 +282,43 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\Subscriber\MessageBusSubscriber.cs" />
-    <Compile Include="Menu\TaskManagerMenu.cs" />
-    <Compile Include="Events\TaskEventGenerator.cs" />
-    <Compile Include="Model\Interval.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Repository\TaskRepository.cs" />
-    <Compile Include="TasksVersionUtil.cs" />
-    <Compile Include="UserControls\AbsenceNotification.xaml.cs">
-      <DependentUpon>AbsenceNotification.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\ActiveTask\ActiveTaskWindow.xaml.cs">
-      <DependentUpon>ActiveTaskWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\ActiveTask\ActiveTaskWindowAction.cs" />
-    <Compile Include="UserControls\ActiveTask\ActiveTaskWindowDescriptor.cs" />
-    <Compile Include="UserControls\ActiveTask\ActiveTaskWindowRegistrar.cs" />
-    <Compile Include="UserControls\EditTask\TaskEditControl.xaml.cs">
-      <DependentUpon>TaskEditControl.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="TasksVersionUtilTestSuite\$(TasksVariant)Test.cs" />
+    <Compile Include="TestAssemblyInitialize.cs" />
+    <Compile Include="Model\IntervalTest.cs" />
+    <Compile Include="Model\TaskTest.cs" />
+    <Compile Include="UserControls\ActiveTask\ActiveTaskWindowTest.cs" />
+    <Compile Include="UserControls\EditTask\Converter\PrettyDateConverterTest.cs" />
+    <Compile Include="UserControls\NavigationControl\IconsContextMenuTest.cs" />
+    <Compile Include="UserControls\NavigationControl\Settings\IconsSettingsRepositoryTest.cs" />
+    <Compile Include="UserControls\NavigationControl\TaskContextMenuTest.cs" />
+    <Compile Include="UserControls\NavigationControl\MenuBarTest.cs" />
+    <Compile Include="Repository\TaskRepositoryTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Model\Task.cs" />
-    <Compile Include="UserControls\IControlClosed.cs" />
-    <Compile Include="UserControls\IMenuItemClicked.cs" />
-    <Compile Include="UserControls\NavigationControl\IconsContextMenu.xaml.cs">
-      <DependentUpon>IconsContextMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\NavigationControl\Settings\IconsSettings.cs" />
-    <Compile Include="UserControls\NavigationControl\Settings\IIconsSettingsRepository.cs" />
-    <Compile Include="UserControls\NavigationControl\Settings\IconsSettingsRepository.cs" />
-    <Compile Include="UserControls\NavigationControl\MainNavigationControl.xaml.cs">
-      <DependentUpon>MainNavigationControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\NavigationControl\MenuBar.xaml.cs">
-      <DependentUpon>MenuBar.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\NavigationControl\MenuContext.cs" />
-    <Compile Include="UserControls\NavigationControl\TaskContextMenu.xaml.cs">
-      <DependentUpon>TaskContextMenu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\TaskDetail\Converter\PrettyDateConverter.cs" />
-    <Compile Include="UserControls\TaskDetail\TaskDetailContext.cs" />
-    <Compile Include="UserControls\TaskDetail\TaskDetailControl.xaml.cs">
-      <DependentUpon>TaskDetailControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\NavigationControl\MainNavigationWindowAction.cs" />
-    <Compile Include="UserControls\NavigationControl\MainNavigationDescriptor.cs" />
-    <Compile Include="UserControls\TaskOverview\UserControl\TaskOverviewControl.xaml.cs">
-      <DependentUpon>TaskOverviewControl.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="UserControls\NavigationControl\MainNavigationRegistrar.cs" />
-    <Compile Include="UserControls\TaskViewModel.cs" />
-    <Compile Include="Events\TaskEventArgs.cs" />
-    <Compile Include="Events\TaskMovedEventArgs.cs" />
-    <Compile Include="Util\LikertToStringConverter.cs" />
-    <Compile Include="Util\MinutesToDurationConverter.cs" />
-    <Compile Include="Util\PersistenceConstants.cs" />
-    <Compile Include="Util\SingleLineConverter.cs" />
-    <Compile Include="Util\TimespanToStringConverter.cs" />
-    <Compile Include="Util\TrulyObservableCollection.cs" />
+    <Compile Include="UserControls\TaskDetail\TaskDetailControlTest.cs" />
+    <Compile Include="UserControls\TaskViewModelTest.cs" />
+    <Compile Include="Util\LikertToStringConverterTest.cs" />
+    <Compile Include="Util\MinutesToDurationConverterTest.cs" />
+    <Compile Include="Util\SingleLineConverterTest.cs" />
+    <Compile Include="Util\TimespanToStringConverterTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UserControls\AbsenceNotification.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\ActiveTask\ActiveTaskWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\EditTask\TaskEditControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\NavigationControl\IconsContextMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\NavigationControl\MainNavigationControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\NavigationControl\MenuBar.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\NavigationControl\TaskContextMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="UserControls\TaskDetail\TaskDetailControl.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="UserControls\TaskOverview\UserControl\TaskOverviewControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
+    <ProjectReference Include="..\TaskManagerPlugin\KaVE.Tasks.csproj">
+      <Project>{4304740e-cebd-4584-9e13-6c5dffdd8a71}</Project>
+      <Name>KaVE.Tasks</Name>
+    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\TaskComplete_16x.PNG" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\OnTaskChanged_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\OnTaskDeleted_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\TaskCreate_16x.png" />
-    <Resource Include="Resources\Icons\Task_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\TaskActivate_16x.png" />
-    <Resource Include="Resources\Icons\TaskPause_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\TaskShowActive_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\MoveToSubBranch_x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\MoveToBranch_x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\MoveUp_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\MoveDown_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\Expand_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\Backward_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\Forward_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\ImportanceHigh_16x.png" />
-    <Resource Include="Resources\Icons\ImportanceLow_16x.png" />
-    <Resource Include="Resources\Icons\ImportanceNormal_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <SubType>Designer</SubType>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\UrgencyHigh_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\UrgencyLow_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\UrgencyNormal_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\AnnoyanceHigh_16x.png" />
-    <Resource Include="Resources\Icons\AnnoyanceLow_16x.png" />
-    <Resource Include="Resources\Icons\AnnoyanceNormal_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\OptionsDropdown_23x16.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\Run_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\AnnoyanceVeryHigh_16x.png" />
-    <Resource Include="Resources\Icons\AnnoyanceVeryLow_16x.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Resources\Icons\ImportanceVeryHigh_16x.png" />
-    <Resource Include="Resources\Icons\ImportanceVeryLow_16x.png" />
-    <Resource Include="Resources\Icons\UrgencyVeryHigh_16x.png" />
-    <Resource Include="Resources\Icons\UrgencyVeryLow_16x.png" />
-  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets" Condition="Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
+    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.1.18\build\net45\MSTest.TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.1.18\build\net45\MSTest.TestAdapter.props'))" />
+    <Error Condition="!Exists('..\packages\MSTest.TestAdapter.1.1.18\build\net45\MSTest.TestAdapter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSTest.TestAdapter.1.1.18\build\net45\MSTest.TestAdapter.targets'))" />
     <Error Condition="!Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.108.0.20170613.154401\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.108.0.20170613.154401\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.targets'))" />
@@ -479,7 +336,10 @@
     <Error Condition="!Exists('..\packages\JetBrains.Psi.Features.UnitTesting.108.0.20170613.154830\build\JetBrains.Psi.Features.UnitTesting.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Psi.Features.UnitTesting.108.0.20170613.154830\build\JetBrains.Psi.Features.UnitTesting.targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.Psi.Features.test.Framework.108.0.20170613.154830\build\JetBrains.Psi.Features.test.Framework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.Psi.Features.test.Framework.108.0.20170613.154830\build\JetBrains.Psi.Features.test.Framework.targets'))" />
     <Error Condition="!Exists('..\packages\JetBrains.ReSharper.SDK.Internal.108.0.20170613.162448\build\JetBrains.ReSharper.SDK.Internal.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.ReSharper.SDK.Internal.108.0.20170613.162448\build\JetBrains.ReSharper.SDK.Internal.targets'))" />
+    <Error Condition="!Exists('..\packages\JetBrains.ReSharper.SDK.Tests.2017.1.20170613.162448\build\JetBrains.ReSharper.SDK.Tests.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\JetBrains.ReSharper.SDK.Tests.2017.1.20170613.162448\build\JetBrains.ReSharper.SDK.Tests.props'))" />
   </Target>
+  <Import Project="..\packages\MSTest.TestAdapter.1.1.18\build\net45\MSTest.TestAdapter.targets" Condition="Exists('..\packages\MSTest.TestAdapter.1.1.18\build\net45\MSTest.TestAdapter.targets')" />
+  <Import Project="..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets" Condition="Exists('..\packages\Antlr2.Tools.2.7.6.4\build\Antlr2.Tools.targets')" />
   <Import Project="..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets" Condition="Exists('..\packages\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.2.0.20151217.1\build\JetBrains.Build.Platform.Tasks.ThemedIconsPacker.Targets')" />
   <Import Project="..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.108.0.20170613.154401\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.targets" Condition="Exists('..\packages\JetBrains.Platform.Interop.dotMemoryUnit.Framework.108.0.20170613.154401\build\JetBrains.Platform.Interop.dotMemoryUnit.Framework.targets')" />
   <Import Project="..\packages\JetBrains.Platform.Core.Shell.108.0.20170613.153820\build\JetBrains.Platform.Core.Shell.targets" Condition="Exists('..\packages\JetBrains.Platform.Core.Shell.108.0.20170613.153820\build\JetBrains.Platform.Core.Shell.targets')" />

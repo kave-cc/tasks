@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,13 +22,13 @@ using System.Windows;
 using System.Windows.Controls;
 using JetBrains.DataFlow;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TaskManagerPlugin.UserControls.NavigationControl;
 using KaVE.Commons.TestUtils.UserControls;
+using KaVE.Tasks.Model;
+using KaVE.Tasks.Repository;
+using KaVE.Tasks.UserControls;
+using KaVE.Tasks.UserControls.NavigationControl;
+using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using Moq;
-using TaskManagerPlugin.Model;
-using TaskManagerPlugin.Repository;
-using TaskManagerPlugin.UserControls;
-using TaskManagerPlugin.UserControls.NavigationControl.Settings;
 
 namespace TaskManagerPlugin.Test.UserControls.NavigationControl
 {

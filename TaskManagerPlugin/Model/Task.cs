@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,10 +23,10 @@ using System.Runtime.CompilerServices;
 using Appccelerate.StateMachine;
 using JetBrains.Annotations;
 using KaVE.Commons.Model.Events.Enums;
+using KaVE.Tasks.Util;
 using Newtonsoft.Json;
-using TaskManagerPlugin.Util;
 
-namespace TaskManagerPlugin.Model
+namespace KaVE.Tasks.Model
 {
     public class Task : INotifyPropertyChanged, ICloneable
     {

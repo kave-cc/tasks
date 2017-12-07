@@ -12,22 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-using System;
-using System.Collections.Generic;
+ */
+
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using JetBrains.Annotations;
-using KaVE.Commons.Utils.Json;
-using Newtonsoft.Json;
-using TaskManagerPlugin.Util;
 using JetBrains.Application;
+using KaVE.Commons.Utils.Json;
+using KaVE.Tasks.Util;
+using Newtonsoft.Json;
 
-namespace TaskManagerPlugin.UserControls.NavigationControl.Settings
+namespace KaVE.Tasks.UserControls.NavigationControl.Settings
 {
     [ShellComponent]
     public class IconsSettingsRepository : IIconsSettingsRepository, INotifyPropertyChanged

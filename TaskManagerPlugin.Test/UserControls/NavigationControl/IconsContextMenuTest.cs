@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,16 +20,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using JetBrains.DataFlow;
+using KaVE.Tasks.UserControls.NavigationControl;
+using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TaskManagerPlugin.UserControls.NavigationControl;
-using TaskManagerPlugin.UserControls.NavigationControl.Settings;
 
 namespace TaskManagerPlugin.Test.UserControls.NavigationControl
 {
     [TestClass]
     public class IconsContextMenuTest
     {
-        private TaskManagerPlugin.UserControls.NavigationControl.Settings.IconsSettings _iconsSettings;
+        private IconsSettings _iconsSettings;
         private IconsContextMenu _menu;
         private const string FileUri = "testSettings.json";
 

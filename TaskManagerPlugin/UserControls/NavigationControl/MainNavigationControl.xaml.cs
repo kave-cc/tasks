@@ -12,35 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-using System;
+ */
+
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using JetBrains.ActionManagement;
 using JetBrains.DataFlow;
 using JetBrains.ReSharper.Resources.Shell;
-using TaskManagerPlugin.Repository;
-using TaskManagerPlugin.UserControls.ActiveTask;
-using TaskManagerPlugin.UserControls.EditTask;
-using TaskManagerPlugin.UserControls.NavigationControl.Settings;
-using TaskManagerPlugin.UserControls.TaskDetail;
-using TaskManagerPlugin.UserControls.TaskOverview.UserControl;
-using Task = TaskManagerPlugin.Model.Task;
+using KaVE.Tasks.Repository;
+using KaVE.Tasks.UserControls.ActiveTask;
+using KaVE.Tasks.UserControls.EditTask;
+using KaVE.Tasks.UserControls.TaskDetail;
+using KaVE.Tasks.UserControls.TaskOverview.UserControl;
+using Task = KaVE.Tasks.Model.Task;
 
-namespace TaskManagerPlugin.UserControls.NavigationControl
+namespace KaVE.Tasks.UserControls.NavigationControl
 {
     /// <summary>
     /// Interaction logic for NavigationControl.xaml

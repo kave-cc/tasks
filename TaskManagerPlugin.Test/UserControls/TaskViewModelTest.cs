@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 using System;
 using System.Configuration.Internal;
 using System.IO;
@@ -20,16 +20,16 @@ using JetBrains.DataFlow;
 using JetBrains.Threading;
 using KaVE.Commons.Model.Events.Tasks;
 using KaVE.Commons.Utils;
+using KaVE.Tasks;
+using KaVE.Tasks.Events;
+using KaVE.Tasks.Model;
+using KaVE.Tasks.Repository;
+using KaVE.Tasks.UserControls;
+using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using KaVE.VS.Commons;
 using KaVE.VS.Commons.Generators;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using TaskManagerPlugin.Events;
-using TaskManagerPlugin.Model;
-using TaskManagerPlugin.Repository;
-using TaskManagerPlugin.UserControls;
-using TaskManagerPlugin.UserControls.EditTask;
-using TaskManagerPlugin.UserControls.NavigationControl.Settings;
 
 namespace TaskManagerPlugin.Test.UserControls
 {

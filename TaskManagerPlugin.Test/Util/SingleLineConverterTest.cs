@@ -12,10 +12,10 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 using System;
+using KaVE.Tasks.Util;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TaskManagerPlugin.Util;
 
 namespace TaskManagerPlugin.Test.Util
 {

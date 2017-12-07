@@ -12,13 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
+
 using JetBrains.UI.ActionsRevised;
 using JetBrains.UI.MenuGroups;
-using TaskManagerPlugin.UserControls.ActiveTask;
-using TaskManagerPlugin.UserControls.NavigationControl;
+using KaVE.Tasks.UserControls.ActiveTask;
+using KaVE.Tasks.UserControls.NavigationControl;
 
-namespace TaskManagerPlugin.Menu
+namespace KaVE.Tasks.Menu
 {
     [ActionGroup(Id, ActionGroupInsertStyles.Submenu, Id = 1934, Text="&TaskManager")]
     public class TaskManagerMenu : IAction, IInsertLast<VsMainMenuGroup>

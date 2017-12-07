@@ -12,19 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-using System;
-using System.Collections;
+ */
+
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JetBrains.Util;
 
-namespace TaskManagerPlugin.Util
+namespace KaVE.Tasks.Util
 {
     sealed class TrulyObservableCollection<T> : ObservableCollection<T>
     {

@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
+
 using JetBrains.Application;
 using JetBrains.Threading;
 using KaVE.Commons.Model.Events;
@@ -20,10 +21,8 @@ using KaVE.Commons.Model.Events.Tasks;
 using KaVE.Commons.Utils;
 using KaVE.VS.Commons;
 using KaVE.VS.Commons.Generators;
-using TaskManagerPlugin.Model;
-using TaskManagerPlugin.UserControls;
 
-namespace TaskManagerPlugin.Events
+namespace KaVE.Tasks.Events
 {
     [ShellComponent]
     public class TaskEventGenerator : EventGeneratorBase

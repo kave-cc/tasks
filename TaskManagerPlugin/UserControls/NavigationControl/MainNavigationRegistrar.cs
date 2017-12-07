@@ -12,16 +12,17 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
+
 using System.IO;
 using JetBrains.Application;
 using JetBrains.DataFlow;
 using JetBrains.UI.CrossFramework;
 using JetBrains.UI.ToolWindowManagement;
-using TaskManagerPlugin.UserControls.NavigationControl.Settings;
-using TaskManagerPlugin.Util;
+using KaVE.Tasks.UserControls.NavigationControl.Settings;
+using KaVE.Tasks.Util;
 
-namespace TaskManagerPlugin.UserControls.NavigationControl
+namespace KaVE.Tasks.UserControls.NavigationControl
 {
     [ShellComponent]
     public class MainNavigationRegistrar

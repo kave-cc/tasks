@@ -12,16 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+ */
+
 using JetBrains.UI.ActionsRevised;
 using JetBrains.UI.ToolWindowManagement;
 
-namespace TaskManagerPlugin.UserControls.ActiveTask
+namespace KaVE.Tasks.UserControls.ActiveTask
 {
     [Action("ActionShowActiveTask", "Show Active Task", Id = 4600)]
     public class ActiveTaskWindowAction : ActivateToolWindowActionHandler<ActiveTaskWindowDescriptor>

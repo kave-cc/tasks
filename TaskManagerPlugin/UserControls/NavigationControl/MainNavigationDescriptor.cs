@@ -12,18 +12,19 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
+
 using JetBrains.Application;
 using JetBrains.Application.BuildScript.Application;
 using JetBrains.UI.ToolWindowManagement;
 
-namespace TaskManagerPlugin.UserControls.NavigationControl
+namespace KaVE.Tasks.UserControls.NavigationControl
 {
     [ToolWindowDescriptor(
         ProductNeutralId = "Task Overview Window",
         Text = "Task Overview",
         Type = ToolWindowType.SingleInstance,
-        Icon = typeof(JetBrains.Ide.Resources.IdeThemedIcons.HtmlDocument),
+        Icon = typeof(global::JetBrains.Ide.Resources.IdeThemedIcons.HtmlDocument),
         VisibilityPersistenceScope = ToolWindowVisibilityPersistenceScope.Global,
         InitialDocking = ToolWindowInitialDocking.Left
         )

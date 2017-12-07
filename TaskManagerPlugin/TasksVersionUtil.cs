@@ -18,7 +18,7 @@ using JetBrains.Application;
 using KaVE.Commons.Model;
 using KaVE.Commons.Utils;
 
-namespace TaskManagerPlugin
+namespace KaVE.Tasks
 {
     [ShellComponent]
     public class TasksVersionUtil

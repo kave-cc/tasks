@@ -12,7 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
 
 using System;
 using System.Linq;
@@ -20,11 +20,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using JetBrains.DataFlow;
-using JetBrains.UI.Wpf.DragDrop.Utilities;
-using TaskManagerPlugin.Model;
-using TaskManagerPlugin.UserControls.NavigationControl;
+using KaVE.Tasks.Model;
+using KaVE.Tasks.UserControls.NavigationControl;
 
-namespace TaskManagerPlugin.UserControls.TaskOverview.UserControl
+namespace KaVE.Tasks.UserControls.TaskOverview.UserControl
 {
     /// <summary>
     ///     Interaction logic for TaskOverviewControl.xaml

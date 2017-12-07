@@ -12,14 +12,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-using System;
-using System.Windows;
-using System.Windows.Controls;
-using TaskManagerPlugin.Model;
-using TaskManagerPlugin.Repository;
+ */
 
-namespace TaskManagerPlugin.UserControls.EditTask
+using System;
+using System.Windows.Controls;
+using KaVE.Tasks.Model;
+
+namespace KaVE.Tasks.UserControls.EditTask
 {
     /// <summary>
     /// Interaction logic for TaskEditControl.xaml

@@ -12,7 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
+ */
+
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -21,16 +22,12 @@ using JetBrains.Annotations;
 using JetBrains.Application;
 using JetBrains.DataFlow;
 using KaVE.Commons.Model.Events.Tasks;
-using KaVE.Commons.Utils.Reflection;
-using TaskManagerPlugin.Events;
-using TaskManagerPlugin.Model;
-using TaskManagerPlugin.Repository;
-using TaskManagerPlugin.UserControls.NavigationControl;
-using TaskManagerPlugin.UserControls.NavigationControl.Settings;
-using TaskManagerPlugin.UserControls.TaskOverview.UserControl;
-using TaskManagerPlugin.Util;
+using KaVE.Tasks.Events;
+using KaVE.Tasks.Model;
+using KaVE.Tasks.Repository;
+using KaVE.Tasks.UserControls.NavigationControl.Settings;
 
-namespace TaskManagerPlugin.UserControls
+namespace KaVE.Tasks.UserControls
 {
     [ShellComponent]
     public class TaskViewModel : INotifyPropertyChanged

@@ -15,6 +15,7 @@
  */
 
 using KaVE.Commons.Model;
+using KaVE.Tasks;
 using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.TasksVersionUtilTestSuite

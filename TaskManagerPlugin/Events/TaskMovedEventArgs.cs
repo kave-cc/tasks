@@ -12,13 +12,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
-*/
-using System;
-using System.Collections.Generic;
-using KaVE.Commons.Model.Events.Tasks;
-using TaskManagerPlugin.Model;
+ */
 
-namespace TaskManagerPlugin.Events
+using KaVE.Commons.Model.Events.Tasks;
+using KaVE.Tasks.Model;
+
+namespace KaVE.Tasks.Events
 {
     internal class TaskMovedEventArgs : TaskEventArgs
     {
