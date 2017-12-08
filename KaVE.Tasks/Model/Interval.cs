@@ -72,5 +72,21 @@ namespace KaVE.Tasks.Model
             OnPropertyChanged(propertyName);
             return true;
         }
+
+        public override bool Equals(object obj)
+        {
+            var interval = obj as Interval;
+            return interval != null &&
+                   _startTime.Equals(interval._startTime) &&
+                   _endTime.Equals(interval._endTime);
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 90671313;
+            hashCode = hashCode * -1521134295 + EqualityComparer<DateTimeOffset>.Default.GetHashCode(_startTime);
+            hashCode = hashCode * -1521134295 + EqualityComparer<DateTimeOffset>.Default.GetHashCode(_endTime);
+            return hashCode;
+        }
     }
 }

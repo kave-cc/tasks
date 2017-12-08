@@ -13,21 +13,97 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using KaVE.Tasks.Model;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.Model
 {
-    [TestClass]
+    [TestFixture]
     public class IntervalTest
     {
+        [Test]
+        public void WhenEndTimeIsDifferent_EqualsIsFalse()
+        {
+            var now = DateTimeOffset.Now;
 
-        [TestMethod]
+            var interval = new Interval
+            {
+                StartTime = now,
+                EndTime = now
+            };
+
+            var interval2 = new Interval
+            {
+                StartTime = now,
+                EndTime = now.AddMilliseconds(1)
+            };
+
+            Assert.AreNotEqual(interval, interval2);
+        }
+
+        [Test]
+        public void WhenEndTimeIsDifferent_HashCodeIsDifferent()
+        {
+            var now = DateTimeOffset.Now;
+
+            var interval = new Interval
+            {
+                StartTime = now,
+                EndTime = now
+            };
+
+            var interval2 = new Interval
+            {
+                StartTime = now,
+                EndTime = now.AddMilliseconds(1)
+            };
+
+            Assert.AreNotEqual(interval.GetHashCode(), interval2.GetHashCode());
+        }
+
+        [Test]
+        public void WhenIntervalsAreEqual_EqualsIsTrue()
+        {
+            var now = DateTimeOffset.Now;
+
+            var interval = new Interval
+            {
+                StartTime = now,
+                EndTime = now
+            };
+
+            var interval2 = new Interval
+            {
+                StartTime = now,
+                EndTime = now
+            };
+
+            Assert.AreEqual(interval, interval2);
+        }
+
+        [Test]
+        public void WhenIntervalsAreEqual_HashCodeIsSame()
+        {
+            var now = DateTimeOffset.Now;
+
+            var interval = new Interval
+            {
+                StartTime = now,
+                EndTime = now
+            };
+
+            var interval2 = new Interval
+            {
+                StartTime = now,
+                EndTime = now
+            };
+
+            Assert.AreEqual(interval.GetHashCode(), interval2.GetHashCode());
+        }
+
+        [Test]
         public void WhenIsActive_ShouldCalculateTimeSpanToNow()
         {
             var interval = new Interval
@@ -37,13 +113,13 @@ namespace TaskManagerPlugin.Test.Model
 
             var timeSpan = interval.GetTimeSpan();
             var expected = new TimeSpan(0, 0, 10, 0);
-            Assert.AreEqual(expected, timeSpan);
+            Assert.IsTrue((timeSpan - expected).TotalSeconds < 1);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenIsClosed_ShouldCalculateIntervalAsTimeSpan()
         {
-            var interval = new Interval()
+            var interval = new Interval
             {
                 StartTime = DateTimeOffset.Now,
                 EndTime = DateTimeOffset.Now.AddMinutes(10)
@@ -55,7 +131,7 @@ namespace TaskManagerPlugin.Test.Model
             Assert.AreEqual(expected.Seconds, timeSpan.Seconds);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenIsNotActiveAndNotClosed_ShouldReturnZero()
         {
             var interval = new Interval();
@@ -64,6 +140,46 @@ namespace TaskManagerPlugin.Test.Model
             var expected = new TimeSpan(0);
 
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void WhenStartTimeIsDifferent_EqualsIsFalse()
+        {
+            var now = DateTimeOffset.Now;
+
+            var interval = new Interval
+            {
+                StartTime = now,
+                EndTime = now
+            };
+
+            var interval2 = new Interval
+            {
+                StartTime = now.AddMilliseconds(1),
+                EndTime = now
+            };
+
+            Assert.AreNotEqual(interval, interval2);
+        }
+
+        [Test]
+        public void WhenStartTimeIsDifferent_HashCodeIsDifferent()
+        {
+            var now = DateTimeOffset.Now;
+
+            var interval = new Interval
+            {
+                StartTime = now,
+                EndTime = now
+            };
+
+            var interval2 = new Interval
+            {
+                StartTime = now.AddMilliseconds(1),
+                EndTime = now
+            };
+
+            Assert.AreNotEqual(interval.GetHashCode(), interval2.GetHashCode());
         }
     }
 }

@@ -13,28 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using KaVE.Tasks.Util;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.Util
 {
-    [TestClass]
+    [TestFixture]
     public class SingleLineConverterTest
     {
         private readonly SingleLineConverter _converter = new SingleLineConverter();
 
-        [TestMethod]
-        public void WhenNoNewLinesAreContained_DoesNotModifyString()
+        [Test]
+        [ExpectedException(typeof(NotSupportedException))]
+        public void WhenConvertBackIsCalled_Throws()
         {
-            const string testString = "This is a test without a new line character!";
+            const string test = "asdf";
 
-            var actual = _converter.Convert(testString, null, null, null);
-
-            Assert.AreEqual(testString, actual);
+            _converter.ConvertBack(test, null, null, null);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenNewLinesAreContained_ReplacesNewLinesWithSpaces()
         {
             const string testString = "This is a test\nwith multiple new\nline\ncharacters.";
@@ -45,13 +45,14 @@ namespace TaskManagerPlugin.Test.Util
             Assert.AreEqual(expected, actual);
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(NotSupportedException))]
-        public void WhenConvertBackIsCalled_Throws()
+        [Test]
+        public void WhenNoNewLinesAreContained_DoesNotModifyString()
         {
-            const string test = "asdf";
+            const string testString = "This is a test without a new line character!";
 
-            _converter.ConvertBack(test, null, null, null);
+            var actual = _converter.Convert(testString, null, null, null);
+
+            Assert.AreEqual(testString, actual);
         }
     }
 }

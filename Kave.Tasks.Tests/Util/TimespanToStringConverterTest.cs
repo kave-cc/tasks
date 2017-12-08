@@ -13,31 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using KaVE.Tasks.Util;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.Util
 {
-    [TestClass]
+    [TestFixture]
     public class TimespanToStringConverterTest
     {
-        private TimeSpanToStringConverter _converter = new TimeSpanToStringConverter();
+        private readonly TimeSpanToStringConverter _converter = new TimeSpanToStringConverter();
 
-        [TestMethod]
-        public void WhenTimeSpanIsOneSecond_ShouldOnlyShowOneSecond()
-        {
-            var timeSpan = new TimeSpan(0, 0, 0, 1);
-            var converted = _converter.Convert(timeSpan, null, null, null);
-
-            Assert.AreEqual("1 second", converted);
-        }
-
-        [TestMethod]
+        [Test]
         public void WhenTimeSpanIsLessThanAMinute_ShouldOnlyShowSeconds()
         {
             var timeSpan = new TimeSpan(0, 0, 0, 10);
@@ -46,25 +34,7 @@ namespace TaskManagerPlugin.Test.Util
             Assert.AreEqual("10 seconds", converted);
         }
 
-        [TestMethod]
-        public void WhenTimeSpanIsOneMinute_ShouldOnlyShowOneMinute()
-        {
-            var timeSpan = new TimeSpan(0, 0, 1, 0);
-            var converted = _converter.Convert(timeSpan, null, null, null);
-
-            Assert.AreEqual("1 minute", converted);
-        }
-
-        [TestMethod]
-        public void WhenTimeSpanIsLessThanTenMinutesAndZeroSeconds_ShouldOnlyShowMinutes()
-        {
-            var timeSpan = new TimeSpan(0, 0, 10, 0);
-            var converted = _converter.Convert(timeSpan, null, null, null);
-
-            Assert.AreEqual("10 minutes", converted);
-        }
-
-        [TestMethod]
+        [Test]
         public void WhenTimeSpanIsLessThanTenMinutes_ShouldShowMinutesAndSeconds()
         {
             var timeSpan = new TimeSpan(0, 0, 9, 10);
@@ -73,16 +43,25 @@ namespace TaskManagerPlugin.Test.Util
             Assert.AreEqual("9 minutes, 10 seconds", converted);
         }
 
-        [TestMethod]
-        public void WhenTimeSpanIsOneHour_ShouldOnlyShowOneHour()
+        [Test]
+        public void WhenTimeSpanIsLessThanTenMinutesAndZeroSeconds_ShouldOnlyShowMinutes()
         {
-            var timeSpan = new TimeSpan(0, 1, 0, 0);
+            var timeSpan = new TimeSpan(0, 0, 10, 0);
             var converted = _converter.Convert(timeSpan, null, null, null);
 
-            Assert.AreEqual("1 hour", converted);
+            Assert.AreEqual("10 minutes", converted);
         }
 
-        [TestMethod]
+        [Test]
+        public void WhenTimeSpanIsMoreThanAnHour_ShouldShowHoursAndMinutes()
+        {
+            var timeSpan = new TimeSpan(0, 10, 10, 10);
+            var converted = _converter.Convert(timeSpan, null, null, null);
+
+            Assert.AreEqual("10 hours, 10 minutes", converted);
+        }
+
+        [Test]
         public void WhenTimeSpanIsMoreThanAnHourAndZeroMinutes_ShouldOnlyShowHours()
         {
             var timeSpan = new TimeSpan(0, 10, 0, 10);
@@ -91,13 +70,31 @@ namespace TaskManagerPlugin.Test.Util
             Assert.AreEqual("10 hours", converted);
         }
 
-        [TestMethod]
-        public void WhenTimeSpanIsMoreThanAnHour_ShouldShowHoursAndMinutes()
+        [Test]
+        public void WhenTimeSpanIsOneHour_ShouldOnlyShowOneHour()
         {
-            var timeSpan = new TimeSpan(0, 10, 10, 10);
+            var timeSpan = new TimeSpan(0, 1, 0, 0);
             var converted = _converter.Convert(timeSpan, null, null, null);
 
-            Assert.AreEqual("10 hours, 10 minutes", converted);
+            Assert.AreEqual("1 hour", converted);
+        }
+
+        [Test]
+        public void WhenTimeSpanIsOneMinute_ShouldOnlyShowOneMinute()
+        {
+            var timeSpan = new TimeSpan(0, 0, 1, 0);
+            var converted = _converter.Convert(timeSpan, null, null, null);
+
+            Assert.AreEqual("1 minute", converted);
+        }
+
+        [Test]
+        public void WhenTimeSpanIsOneSecond_ShouldOnlyShowOneSecond()
+        {
+            var timeSpan = new TimeSpan(0, 0, 0, 1);
+            var converted = _converter.Convert(timeSpan, null, null, null);
+
+            Assert.AreEqual("1 second", converted);
         }
     }
 }

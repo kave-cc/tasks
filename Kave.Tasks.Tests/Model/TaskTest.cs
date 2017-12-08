@@ -13,20 +13,150 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using KaVE.Commons.Model.Events.Enums;
 using KaVE.Tasks.Model;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.Model
 {
-    [TestClass]
+    [TestFixture]
     public class TaskTest
     {
-        [TestMethod]
+        [Test]
+        public void WhenAnnoyanceIsDifferent_EqualsIsFalse()
+        {
+            var task = new Task {Annoyance = Likert5Point.Neutral};
+            var copy = (Task) task.Clone();
+
+            copy.Annoyance = Likert5Point.Negative2;
+
+            Assert.IsFalse(task.Equals(copy));
+        }
+
+        [Test]
+        public void WhenAnnoyanceIsDifferent_HashCodeIsDifferent()
+        {
+            var task = new Task {Annoyance = Likert5Point.Neutral};
+            var copy = (Task) task.Clone();
+
+            copy.Annoyance = Likert5Point.Negative2;
+
+            Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
+        }
+
+        [Test]
+        public void WhenDescriptionIsDifferent_EqualsIsFalse()
+        {
+            var task = new Task {Description = "Descr"};
+            var copy = (Task) task.Clone();
+
+            copy.Description = "Descr2";
+
+            Assert.IsFalse(task.Equals(copy));
+        }
+
+        [Test]
+        public void WhenDescriptionIsDifferent_HashCodeIsDifferent()
+        {
+            var task = new Task {Description = "Descr"};
+            var copy = (Task) task.Clone();
+
+            copy.Description = "Descr2";
+
+            Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
+        }
+
+        [Test]
+        public void WhenIDIsDifferent_EqualsIsFalse()
+        {
+            var task = new Task();
+            var copy = (Task) task.Clone();
+
+            copy.Id = "Id";
+
+            Assert.IsFalse(task.Equals(copy));
+        }
+
+        [Test]
+        public void WhenIDIsDifferent_HashCodeIsDifferent()
+        {
+            var task = new Task();
+            var copy = (Task) task.Clone();
+
+            copy.Id = "Id";
+
+            Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
+        }
+
+        [Test]
+        public void WhenImportanceIsDifferent_EqualsIsFalse()
+        {
+            var task = new Task {Importance = Likert5Point.Neutral};
+            var copy = (Task) task.Clone();
+
+            copy.Importance = Likert5Point.Negative2;
+
+            Assert.IsFalse(task.Equals(copy));
+        }
+
+        [Test]
+        public void WhenImportanceIsDifferent_HashCodeIsDifferent()
+        {
+            var task = new Task {Importance = Likert5Point.Neutral};
+            var copy = (Task) task.Clone();
+
+            copy.Importance = Likert5Point.Negative2;
+
+            Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
+        }
+
+        [Test]
+        public void WhenIsActiveIsDifferent_EqualsIsFalse()
+        {
+            var task = new Task {IsActive = false};
+            var copy = (Task) task.Clone();
+
+            copy.IsActive = true;
+
+            Assert.IsFalse(task.Equals(copy));
+        }
+
+        [Test]
+        public void WhenIsActiveIsDifferent_HashCodeIsDifferent()
+        {
+            var task = new Task {IsActive = false};
+            var copy = (Task) task.Clone();
+
+            copy.IsActive = true;
+
+            Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
+        }
+
+        [Test]
+        public void WhenIsOpenIsDifferent_EqualsIsFalse()
+        {
+            var task = new Task {IsOpen = false};
+            var copy = (Task) task.Clone();
+
+            copy.IsOpen = true;
+
+            Assert.IsFalse(task.Equals(copy));
+        }
+
+        [Test]
+        public void WhenIsOpenIsDifferent_HashCodeIsDifferent()
+        {
+            var task = new Task {IsOpen = false};
+            var copy = (Task) task.Clone();
+
+            copy.IsOpen = true;
+
+            Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
+        }
+
+        [Test]
         public void WhenTaskHasSubTasks_AddsDurationOfSubTasksToDuration()
         {
             var task = new Task();
@@ -44,6 +174,68 @@ namespace TaskManagerPlugin.Test.Model
             var expected = new TimeSpan(0, 20, 0);
 
             Assert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        public void WhenTasksAreEqual_EqualsIsTrue()
+        {
+            var task = new Task {Title = "Title"};
+            var copy = (Task) task.Clone();
+
+            Assert.AreEqual(task, copy);
+        }
+
+        [Test]
+        public void WhenTasksAreEqual_HashCodeIsSame()
+        {
+            var task = new Task {Title = "Title"};
+            var copy = (Task) task.Clone();
+
+            Assert.AreEqual(task, copy);
+        }
+
+        [Test]
+        public void WhenTitleIsDifferent_EqualsIsFalse()
+        {
+            var task = new Task {Title = "Title"};
+            var copy = (Task) task.Clone();
+
+            task.Title = "Title2";
+
+            Assert.IsFalse(task.Equals(copy));
+        }
+
+        [Test]
+        public void WhenTitleIsDifferent_HashCodeIsDifferent()
+        {
+            var task = new Task {Title = "Title"};
+            var copy = (Task) task.Clone();
+
+            task.Title = "Title2";
+
+            Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
+        }
+
+        [Test]
+        public void WhenUrgencyIsDifferent_EqualsIsFalse()
+        {
+            var task = new Task {Urgency = Likert5Point.Neutral};
+            var copy = (Task) task.Clone();
+
+            copy.Urgency = Likert5Point.Negative2;
+
+            Assert.IsFalse(task.Equals(copy));
+        }
+
+        [Test]
+        public void WhenUrgencyIsDifferent_HashCodeIsDifferent()
+        {
+            var task = new Task {Urgency = Likert5Point.Neutral};
+            var copy = (Task) task.Clone();
+
+            copy.Urgency = Likert5Point.Negative2;
+
+            Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
         }
     }
 }

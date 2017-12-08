@@ -13,43 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using KaVE.Commons.Model.Events.Enums;
 using KaVE.Tasks.Util;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.Util
 {
-    [TestClass]
+    [TestFixture]
     public class LikertToStringConverterTest
     {
         private readonly LikertToStringConverter _converter = new LikertToStringConverter();
 
-        [TestMethod]
-        public void IfUnknown_ReturnsUnknown()
-        {
-            var likert = Likert5Point.Unknown;
-
-            var converted = _converter.Convert(likert, null, null, null);
-
-            Assert.AreEqual("Unknown", converted);
-        }
-
-        [TestMethod]
-        public void IfNegative2_ReturnsVeryLow()
-        {
-            var likert = Likert5Point.Negative2;
-
-            var converted = _converter.Convert(likert, null, null, null);
-
-            Assert.AreEqual("Very Low", converted);
-        }
-
-        [TestMethod]
+        [Test]
         public void IfNegative1_ReturnsLow()
         {
             var likert = Likert5Point.Negative1;
@@ -59,7 +35,17 @@ namespace TaskManagerPlugin.Test.Util
             Assert.AreEqual("Low", converted);
         }
 
-        [TestMethod]
+        [Test]
+        public void IfNegative2_ReturnsVeryLow()
+        {
+            var likert = Likert5Point.Negative2;
+
+            var converted = _converter.Convert(likert, null, null, null);
+
+            Assert.AreEqual("Very Low", converted);
+        }
+
+        [Test]
         public void IfNeutral_ReturnsNormal()
         {
             var likert = Likert5Point.Neutral;
@@ -69,7 +55,7 @@ namespace TaskManagerPlugin.Test.Util
             Assert.AreEqual("Normal", converted);
         }
 
-        [TestMethod]
+        [Test]
         public void IfPositive1_ReturnsUnknown()
         {
             var likert = Likert5Point.Positive1;
@@ -79,7 +65,7 @@ namespace TaskManagerPlugin.Test.Util
             Assert.AreEqual("High", converted);
         }
 
-        [TestMethod]
+        [Test]
         public void IfPositive2_ReturnsUnknown()
         {
             var likert = Likert5Point.Positive2;
@@ -89,5 +75,14 @@ namespace TaskManagerPlugin.Test.Util
             Assert.AreEqual("Very High", converted);
         }
 
+        [Test]
+        public void IfUnknown_ReturnsUnknown()
+        {
+            var likert = Likert5Point.Unknown;
+
+            var converted = _converter.Convert(likert, null, null, null);
+
+            Assert.AreEqual("Unknown", converted);
+        }
     }
 }

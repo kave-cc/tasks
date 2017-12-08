@@ -18,21 +18,23 @@ using System.IO;
 using KaVE.Tasks.Model;
 using KaVE.Tasks.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
+using Assert = NUnit.Framework.Assert;
 
 namespace TaskManagerPlugin.Test.Repository
 {
-    [TestClass]
+    [TestFixture]
     public class TaskRepositoryTests
     {
         private const string FileUri = "test.json";
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             File.Delete(FileUri);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldCreateFile()
         {
             var repository = new TaskRepository(FileUri);
@@ -40,7 +42,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.IsTrue(File.Exists(FileUri));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldStoreTask()
         {
             var repository = new TaskRepository(FileUri);
@@ -57,7 +59,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual(task, retrievedTask);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldRemoveTask()
         {
             var repository = new TaskRepository(FileUri);
@@ -73,7 +75,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.IsNull(retrievedTask);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldStoreSubTask()
         {
             var repository = new TaskRepository(FileUri);
@@ -96,7 +98,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual(subTask, retrievedSubTask);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldMoveIntervals()
         {
             var repository = new TaskRepository(FileUri);
@@ -124,7 +126,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.IsTrue(retrievedTask.Intervals.Contains(interval));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldMoveSubTask()
         {
             var repository = new TaskRepository(FileUri);
@@ -152,7 +154,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.IsTrue(newParentTask.SubTasks.Contains(childTask));
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldUpdateTask()
         {
             var repository = new TaskRepository(FileUri);
@@ -170,7 +172,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual("Title", retrievedTask.Title);
         }
          
-        [TestMethod]
+        [Test]
         public void ShouldOnlyReturnOpenTasks()
         {
             var repository = new TaskRepository(FileUri);
@@ -199,7 +201,7 @@ namespace TaskManagerPlugin.Test.Repository
             }
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldOnlyReturnClosedTasks()
         {
             var repository = new TaskRepository(FileUri);
@@ -228,7 +230,7 @@ namespace TaskManagerPlugin.Test.Repository
             }
         }
 
-        [TestMethod]
+        [Test]
         public void WhenParentIsRoot_DecreaseShouldSkipOtherStatus()
         {
             var repository = new TaskRepository(FileUri);
@@ -263,7 +265,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual(closedTask1, rootTask.SubTasks[2]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenParentIsNotRoot_DecreaseShouldNotSkipOtherStatus()
         {
             var repository = new TaskRepository(FileUri);
@@ -304,7 +306,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual(closedTask2, fetchedParentTask.SubTasks[2]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenParentIsRoot_IncreaseShouldSkipOtherStatus()
         {
             var repository = new TaskRepository(FileUri);
@@ -339,7 +341,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual(openTask, rootTask.SubTasks[2]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenParentIsNotRoot_IncreaseShouldNotSkipOtherStatus()
         {
             var repository = new TaskRepository(FileUri);
@@ -380,7 +382,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual(openTask, requestedParentTask.SubTasks[2]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMoveTaskTo_InsertsAtCorrectPosition()
         {
             var repository = new TaskRepository(FileUri);
@@ -405,7 +407,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual(task1, rootTask.SubTasks[1]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenIntervalIsClosedAndTaskNotActive_DoesNothing()
         {
             var repository = new TaskRepository(FileUri);
@@ -428,7 +430,7 @@ namespace TaskManagerPlugin.Test.Repository
             Assert.AreEqual(interval, task.Intervals[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenIntervalIsOpenAndTaskActive_ClosesIntervalAndAddsNewInterval()
         {
             var repository = new TaskRepository(FileUri);

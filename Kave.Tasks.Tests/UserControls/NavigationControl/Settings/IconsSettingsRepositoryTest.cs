@@ -15,29 +15,29 @@
  */
 using System.IO;
 using KaVE.Tasks.UserControls.NavigationControl.Settings;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.UserControls.NavigationControl.Settings
 {
-    [TestClass]
+    [TestFixture]
     public class IconsSettingsRepositoryTest
     {
         private const string FileUri = "testSettings.json";
         private IIconsSettingsRepository _settingsRepository;
 
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             _settingsRepository = new IconsSettingsRepository(FileUri);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void CleanUp()
         {
             File.Delete(FileUri);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenPropertyChanged_IsPersisted()
         {
             var settings = _settingsRepository.Settings;

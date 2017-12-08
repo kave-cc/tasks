@@ -22,31 +22,31 @@ using System.Threading.Tasks;
 using JetBrains.DataFlow;
 using KaVE.Tasks.UserControls.NavigationControl;
 using KaVE.Tasks.UserControls.NavigationControl.Settings;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.UserControls.NavigationControl
 {
-    [TestClass]
+    [TestFixture, RequiresSTA]
     public class IconsContextMenuTest
     {
         private IconsSettings _iconsSettings;
         private IconsContextMenu _menu;
         private const string FileUri = "testSettings.json";
 
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             _iconsSettings = new IconsSettings();
             _menu = new IconsContextMenu(_iconsSettings);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void CleanUp()
         {
             File.Delete(FileUri);
         }
 
-        [TestMethod]
+        [Test]
         public void IconsAreShownCorrectly()
         {
             _iconsSettings.ShowAnnoyance = true;

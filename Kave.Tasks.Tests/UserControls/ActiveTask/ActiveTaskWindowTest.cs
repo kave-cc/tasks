@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using JetBrains.DataFlow;
 using KaVE.Tasks.Model;
@@ -27,49 +24,50 @@ using KaVE.Tasks.Repository;
 using KaVE.Tasks.UserControls;
 using KaVE.Tasks.UserControls.ActiveTask;
 using KaVE.Tasks.UserControls.NavigationControl.Settings;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.UserControls.ActiveTask
 {
-    [TestClass]
+    [TestFixture, RequiresSTA]
     public class ActiveTaskWindowTest
     {
-        private TaskRepository _repository;
-        private ActiveTaskWindow _window;
-        private TaskViewModel _viewModel;
-        private const string FileUri = "test.json";
-
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             var settingsMock = new Mock<IIconsSettingsRepository>();
             settingsMock.Setup(mock => mock.Settings).Returns(new IconsSettings());
             _repository = new TaskRepository(FileUri);
-            _viewModel = new TaskViewModel(_repository, Lifetimes.Define("Lifetime.test").Lifetime, settingsMock.Object);
+            _viewModel = new TaskViewModel(_repository, Lifetimes.Define("Lifetime.test").Lifetime,
+                settingsMock.Object);
             _window = new ActiveTaskWindow(_viewModel);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void CleanUp()
         {
             File.Delete(FileUri);
         }
 
-        [TestMethod]
+        private TaskRepository _repository;
+        private ActiveTaskWindow _window;
+        private TaskViewModel _viewModel;
+        private const string FileUri = "test.json";
+
+        [Test]
         public void WhenActivateTaskIsClicked_ShouldActivateTask()
         {
-            _repository.AddTask(new Task() {Title = "Title"});
+            _repository.AddTask(new Task {Title = "Title"});
             _window.OpenTasksCombo.SelectedIndex = 0;
             _window.Activate.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
             Assert.AreEqual(_repository.GetOpenTasks()[0], _viewModel.ActiveTask);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenActiveTaskExists_ShouldDisplayTimeSpan()
         {
-            var task = new Task() {Title = "Title"};
+            var task = new Task {Title = "Title"};
             _repository.AddTask(task);
             task.Intervals.Add(new Interval
             {

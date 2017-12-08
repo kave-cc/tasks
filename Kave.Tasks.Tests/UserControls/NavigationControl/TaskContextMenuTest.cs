@@ -13,45 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
+
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using JetBrains.DataFlow;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using KaVE.Commons.TestUtils.UserControls;
 using KaVE.Tasks.Model;
 using KaVE.Tasks.Repository;
 using KaVE.Tasks.UserControls;
 using KaVE.Tasks.UserControls.NavigationControl;
 using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using Moq;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.UserControls.NavigationControl
 {
-    [TestClass]
+    [TestFixture, RequiresSTA]
     public class TaskContextMenuTest
     {
-        private TaskContextMenu _contextMenu;
-        private List<string> _results;
-        private TaskViewModel _viewModel;
-        private MenuContext _menuContext;
-        private Task _task;
-        private Mock<IIconsSettingsRepository> _settingsRepoMock;
-
-        private const string FileUri = "test.json";
-
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             _settingsRepoMock = new Mock<IIconsSettingsRepository>();
             _settingsRepoMock.Setup(mock => mock.Settings).Returns(new IconsSettings());
 
             var repo = new TaskRepository(FileUri);
-            _task = new Task()
+            _task = new Task
             {
                 Title = "Title"
             };
@@ -64,13 +52,27 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             _contextMenu.MenuItemClicked += (sender, name) => _results.Add(name);
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             File.Delete(FileUri);
         }
 
-        [TestMethod]
+        private TaskContextMenu _contextMenu;
+        private List<string> _results;
+        private TaskViewModel _viewModel;
+        private MenuContext _menuContext;
+        private Task _task;
+        private Mock<IIconsSettingsRepository> _settingsRepoMock;
+
+        private const string FileUri = "test.json";
+
+        private static void Click(MenuItem item)
+        {
+            item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        }
+
+        [Test]
         public void WhenMenuItemActivateIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemActivate);
@@ -79,7 +81,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemActivate", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMenuItemCloseIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemClose);
@@ -88,7 +90,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemClose", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMenuItemDeleteIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemDelete);
@@ -97,7 +99,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemDelete", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMenuItemEditIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemEdit);
@@ -106,7 +108,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemEdit", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMenuItemMoveDownIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemMoveDown);
@@ -115,7 +117,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemMoveDown", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMenuItemMoveLeftIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemMoveLeft);
@@ -124,7 +126,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemMoveLeft", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMenuItemMoveRightIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemMoveRight);
@@ -133,7 +135,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemMoveRight", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMenuItemOpenIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemOpen);
@@ -142,7 +144,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemOpen", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenMenuItemPauseIsClicked_EventIsTriggered()
         {
             Click(_contextMenu.MenuItemPause);
@@ -151,7 +153,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual("MenuItemPause", _results[0]);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenTaskIsActive_PauseTaskIsEnabled()
         {
             _viewModel.ActivateTask(_task);
@@ -163,31 +165,7 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual(Visibility.Collapsed, _contextMenu.MenuItemActivate.Visibility);
         }
 
-        [TestMethod]
-        public void WhenTaskIsNotActive_PauseTaskIsEnabled()
-        {
-            _viewModel.OpenTask(_task);
-            _menuContext.Task = _task;
-
-            Assert.IsTrue(_contextMenu.MenuItemActivate.IsEnabled);
-            Assert.AreEqual(Visibility.Visible, _contextMenu.MenuItemActivate.Visibility);
-            Assert.IsFalse(_contextMenu.MenuItemPause.IsEnabled);
-            Assert.AreEqual(Visibility.Collapsed, _contextMenu.MenuItemPause.Visibility);
-        }
-
-        [TestMethod]
-        public void WhenTaskIsOpen_CloseIsEnabled()
-        {
-            _viewModel.OpenTask(_task);
-            _menuContext.Task = _task;
-
-            Assert.IsTrue(_contextMenu.MenuItemClose.IsEnabled);
-            Assert.AreEqual(Visibility.Visible, _contextMenu.MenuItemClose.Visibility);
-            Assert.IsFalse(_contextMenu.MenuItemOpen.IsEnabled);
-            Assert.AreEqual(Visibility.Collapsed, _contextMenu.MenuItemOpen.Visibility);
-        }
-
-        [TestMethod]
+        [Test]
         public void WhenTaskIsClosed_CloseIsEnabled()
         {
             _viewModel.CompleteTask(_task);
@@ -199,28 +177,22 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.AreEqual(Visibility.Collapsed, _contextMenu.MenuItemClose.Visibility);
         }
 
-        [TestMethod]
-        public void WhenTaskIsNotOnTop_MoveUpIsEnabled()
+        [Test]
+        public void WhenTaskIsNotActive_PauseTaskIsEnabled()
         {
             _viewModel.OpenTask(_task);
+            _menuContext.Task = _task;
 
-            var task = new Task()
-            {
-                Title = "Title"
-            };
-
-            _viewModel.AddTask(task);
-
-            _menuContext.Task = task;
-
-            Assert.IsTrue(_contextMenu.MenuItemMoveUp.IsEnabled);
-            Assert.IsFalse(_contextMenu.MenuItemMoveDown.IsEnabled);
+            Assert.IsTrue(_contextMenu.MenuItemActivate.IsEnabled);
+            Assert.AreEqual(Visibility.Visible, _contextMenu.MenuItemActivate.Visibility);
+            Assert.IsFalse(_contextMenu.MenuItemPause.IsEnabled);
+            Assert.AreEqual(Visibility.Collapsed, _contextMenu.MenuItemPause.Visibility);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenTaskIsNotOnBottom_MoveDownIsEnabled()
         {
-            var task = new Task()
+            var task = new Task
             {
                 Title = "Title"
             };
@@ -233,7 +205,25 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.IsFalse(_contextMenu.MenuItemMoveUp.IsEnabled);
         }
 
-        [TestMethod]
+        [Test]
+        public void WhenTaskIsNotOnTop_MoveUpIsEnabled()
+        {
+            _viewModel.OpenTask(_task);
+
+            var task = new Task
+            {
+                Title = "Title"
+            };
+
+            _viewModel.AddTask(task);
+
+            _menuContext.Task = task;
+
+            Assert.IsTrue(_contextMenu.MenuItemMoveUp.IsEnabled);
+            Assert.IsFalse(_contextMenu.MenuItemMoveDown.IsEnabled);
+        }
+
+        [Test]
         public void WhenTaskIsNull_AllAreDisabled()
         {
             _menuContext.Task = null;
@@ -242,9 +232,16 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             Assert.IsFalse(_contextMenu.MenuItemDelete.IsEnabled);
         }
 
-        private static void Click(MenuItem item)
+        [Test]
+        public void WhenTaskIsOpen_CloseIsEnabled()
         {
-            item.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+            _viewModel.OpenTask(_task);
+            _menuContext.Task = _task;
+
+            Assert.IsTrue(_contextMenu.MenuItemClose.IsEnabled);
+            Assert.AreEqual(Visibility.Visible, _contextMenu.MenuItemClose.Visibility);
+            Assert.IsFalse(_contextMenu.MenuItemOpen.IsEnabled);
+            Assert.AreEqual(Visibility.Collapsed, _contextMenu.MenuItemOpen.Visibility);
         }
     }
 }

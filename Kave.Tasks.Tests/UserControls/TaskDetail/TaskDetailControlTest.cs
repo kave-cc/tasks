@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System;
 using KaVE.Tasks.Model;
 using KaVE.Tasks.UserControls.TaskDetail;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.UserControls.TaskDetail
 {
-    [TestClass]
+    [TestFixture, RequiresSTA]
     public class TaskDetailControlTest
     {
-        private TaskDetailControl _control;
-        private Task _task;
-
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             _task = new Task {Title = "Title", Description = "Description"};
-            var interval = new Interval()
+            var interval = new Interval
             {
                 StartTime = DateTimeOffset.Now.AddMinutes(-10),
                 EndTime = DateTimeOffset.Now
@@ -40,23 +38,26 @@ namespace TaskManagerPlugin.Test.UserControls.TaskDetail
             _control = new TaskDetailControl(_task);
         }
 
-        [TestMethod]
-        public void ShouldDisplayTitle()
-        {
-            Assert.AreEqual(_task.Title, _control.TaskTitle.Text);
-        }
+        private TaskDetailControl _control;
+        private Task _task;
 
-        [TestMethod]
+        [Test]
         public void ShouldDisplayDescription()
         {
             Assert.AreEqual(_task.Description, _control.Description.Text);
         }
 
-        [TestMethod]
+        [Test]
         public void ShouldDisplayTimeSpan()
         {
             var actual = "10 minutes";
             Assert.AreEqual(actual, _control.ActiveTime.Text);
+        }
+
+        [Test]
+        public void ShouldDisplayTitle()
+        {
+            Assert.AreEqual(_task.Title, _control.TaskTitle.Text);
         }
     }
 }

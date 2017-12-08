@@ -28,12 +28,12 @@ using KaVE.Tasks.UserControls;
 using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using KaVE.VS.Commons;
 using KaVE.VS.Commons.Generators;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.UserControls
 {
-    [TestClass]
+    [TestFixture]
     public class TaskViewModelTest
     {
         private const string FileUri = "test.json";
@@ -42,7 +42,7 @@ namespace TaskManagerPlugin.Test.UserControls
         private Mock<IIconsSettingsRepository> _settingsRepoMock;
         private TaskEventArgs _eventArgs;
 
-        [TestInitialize]
+        [SetUp]
         public void SetUp()
         {
             _eventArgs = null;
@@ -58,13 +58,13 @@ namespace TaskManagerPlugin.Test.UserControls
             _generator = new TaskEventGenerator(env.Object, messageBus.Object, dateUtils.Object, threading.Object, new TasksVersionUtil());
         }
 
-        [TestCleanup]
+        [TearDown]
         public void Cleanup()
         {
             File.Delete(FileUri);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenActiveTaskIsStored_ShouldSetActiveTask()
         {
             var openTask = new Task()
@@ -88,7 +88,7 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.AreEqual(activeTask, viewModel.ActiveTask);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenNoActiveTaskIsStored_ShouldNullActiveTask()
         {
             var openTask = new Task()
@@ -105,7 +105,7 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.IsNull(viewModel.ActiveTask);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenLifetimeIsTerminated_ShouldCloseActiveTask()
         {
             var activeTask = new Task()
@@ -124,7 +124,7 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.IsTrue(interval.IsClosed);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenRepositoryIsRestarted_ShouldCreateNewIntervalOnActiveTask()
         {
             var task = new Task()
@@ -149,7 +149,7 @@ namespace TaskManagerPlugin.Test.UserControls
 
         }
 
-        [TestMethod]
+        [Test]
         public void WhenTaskIsMoved_FiresTaskMoveEvent()
         {
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
@@ -165,7 +165,7 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.AreEqual(TaskAction.Move, _eventArgs.Action);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenTaskIsCreated_FiresTaskCreateEvent()
         {
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
@@ -178,7 +178,7 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.AreEqual(TaskAction.Create, _eventArgs.Action);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenTaskIsActivated_FiresTaskActivateEvent()
         {
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
@@ -192,7 +192,7 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.AreEqual(TaskAction.Activate, _eventArgs.Action);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenTaskIsPaused_FiresTaskPauseEvent()
         {
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
@@ -207,7 +207,7 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.AreEqual(TaskAction.Pause, _eventArgs.Action);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenTaskIsCompleted_FiresTaskCompleteEvent()
         {
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
@@ -221,7 +221,7 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.AreEqual(TaskAction.Complete, _eventArgs.Action);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenTaskIsReopened_FiresTaskUndoCompleteEvent()
         {
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");

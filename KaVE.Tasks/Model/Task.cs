@@ -245,5 +245,33 @@ namespace KaVE.Tasks.Model
 
             return task;
         }
+
+        public override bool Equals(object obj)
+        {
+            var task = obj as Task;
+            return task != null &&
+                   Id == task.Id &&
+                   _title == task._title &&
+                   _description == task._description &&
+                   _open == task._open &&
+                   _active == task._active &&
+                   _importance == task._importance &&
+                   _urgency == task._urgency &&
+                   _annoyance == task._annoyance;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -1604425867;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Id);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_title);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(_description);
+            hashCode = hashCode * -1521134295 + _open.GetHashCode();
+            hashCode = hashCode * -1521134295 + _active.GetHashCode();
+            hashCode = hashCode * -1521134295 + _importance.GetHashCode();
+            hashCode = hashCode * -1521134295 + _urgency.GetHashCode();
+            hashCode = hashCode * -1521134295 + _annoyance.GetHashCode();
+            return hashCode;
+        }
     }
 }

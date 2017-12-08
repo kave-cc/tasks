@@ -13,20 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using KaVE.Tasks.Util;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.Util
 {
-    [TestClass]
+    [TestFixture]
     public class MinutesToDurationConverterTest
     {
-        [TestMethod]
+        [Test]
         public void ShouldConvertMinutesToHoursMinutes()
         {
             var converter = new MinutesToDurationConverter();
@@ -35,7 +31,6 @@ namespace TaskManagerPlugin.Test.Util
             var result = (string) converter.Convert(duration, null, null, null);
 
             Assert.AreEqual("01:05", result);
-
         }
     }
 }

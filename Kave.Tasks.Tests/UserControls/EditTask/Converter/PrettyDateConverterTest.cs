@@ -15,16 +15,16 @@
  */
 using System;
 using KaVE.Tasks.UserControls.TaskDetail.Converter;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.UserControls.EditTask.Converter
 {
-    [TestClass]
+    [TestFixture]
     public class PrettyDateConverterTest
     {
         private PrettyDateConverter _converter = new PrettyDateConverter();
 
-        [TestMethod]
+        [Test]
         public void WhenDateIsBeforeYesterday_ShouldPrintDateTime()
         {
             var date = DateTimeOffset.Now.AddDays(-2);
@@ -35,7 +35,7 @@ namespace TaskManagerPlugin.Test.UserControls.EditTask.Converter
             Assert.AreEqual(desiredOutput, result);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenDateIsYesterday_ShouldPrintYesterday()
         {
             var date = DateTimeOffset.Now.AddDays(-1);
@@ -45,7 +45,7 @@ namespace TaskManagerPlugin.Test.UserControls.EditTask.Converter
             Assert.AreEqual("yesterday", result);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenDateIsToday_ShouldPrintToday()
         {
             var date = DateTimeOffset.Now;
@@ -55,7 +55,7 @@ namespace TaskManagerPlugin.Test.UserControls.EditTask.Converter
             Assert.AreEqual("today", result);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenDateIsTomorrow_ShouldPrintTomorrow()
         {
             var date = DateTimeOffset.Now.AddDays(1);
@@ -65,7 +65,7 @@ namespace TaskManagerPlugin.Test.UserControls.EditTask.Converter
             Assert.AreEqual("tomorrow", result);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenDateIsAfterTomorrow_ShouldPrintDateTime()
         {
             var date = DateTimeOffset.Now.AddDays(1);
@@ -76,7 +76,7 @@ namespace TaskManagerPlugin.Test.UserControls.EditTask.Converter
             Assert.AreEqual("tomorrow", result);
         }
 
-        [TestMethod]
+        [Test]
         public void WhenDateIsMin_ShouldReturnNull()
         {
             var date = DateTimeOffset.MinValue;
