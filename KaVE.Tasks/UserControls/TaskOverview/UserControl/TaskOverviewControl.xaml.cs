@@ -43,7 +43,7 @@ namespace KaVE.Tasks.UserControls.TaskOverview.UserControl
         private bool _openTabSelected = true;
         private string _textBoxCache = "";
 
-        private Task SelectedTask => _openTabSelected ? (Task)OpenTasks.SelectedItem : (Task)ClosedTasks.SelectedItem;
+        private Task SelectedTask => Dispatcher.Invoke<Task>(() => _openTabSelected ? (Task)OpenTasks.SelectedItem : (Task)ClosedTasks.SelectedItem);
         private bool Editing => _editTask != null;
         public event ControlClosedHandler ControlClosed;
 
@@ -72,7 +72,7 @@ namespace KaVE.Tasks.UserControls.TaskOverview.UserControl
 
         private void RefreshList(object sender, EventArgs e)
         {
-            OpenTasks.Items.Refresh();
+            this.Dispatcher.Invoke(() => OpenTasks.Items.Refresh());
             OnSelectedTaskChanged(SelectedTask);
         }
 
@@ -159,16 +159,11 @@ namespace KaVE.Tasks.UserControls.TaskOverview.UserControl
         {
             var textWasChanged = textBox.Text != _textBoxCache;
             if (!textWasChanged) return;
-
-            var newVersion = _editTask;
+            
             var isTitleBox = textBox.Name == "Title";
-            var oldVersion = (Task) newVersion.Clone();
-            if (isTitleBox)
-                oldVersion.Title = _textBoxCache;
-            else
-                oldVersion.Description = _textBoxCache;
 
-            _viewModel.OnTaskEdited(oldVersion, newVersion);
+            _viewModel.UpdateTask(_editTask);
+            _viewModel.OnTaskEdited(_editTask);
         }
 
         private static void ShowTextBox(TextBox textBox)

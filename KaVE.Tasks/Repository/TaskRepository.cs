@@ -15,18 +15,22 @@
  */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using Appccelerate.StateMachine;
 using Ionic.Zip;
 using JetBrains.Annotations;
 using JetBrains.Application;
+using JetBrains.ReSharper.PsiGen.Util;
 using KaVE.Commons.Utils.Json;
 using KaVE.Tasks.Model;
 using KaVE.Tasks.Util;
+using KaVE.Tasks.Util.FileUtil;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -43,153 +47,119 @@ namespace KaVE.Tasks.Repository
         void MoveTaskTo(string taskId, string newParentId, int position);
         ObservableCollection<Task> GetOpenTasks();
         ObservableCollection<Task> GetClosedTasks();
-        void IncreasePriority(Task task);
-        void DecreasePriority(Task task);
-        void CloseLatestInterval(Task task, DateTimeOffset endTime);
+        void IncreasePriority(string taskId);
+        void DecreasePriority(string taskId);
+        void CloseLatestInterval(string taskId, DateTimeOffset endTime);
         event PropertyChangedEventHandler PropertyChanged;
     }
 
     [ShellComponent]
-    public class TaskRepository : INotifyPropertyChanged, ITaskRepository
+    public class TaskRepository : INotifyPropertyChanged, ITaskRepository, IDisposable
     {
+        private const string DefaultFile = "tasks.json";
         public static string RootTaskId = "Root";
+        private readonly string _fileUri;
+        private readonly FileChangeWatcher _watcher;
+        private DateTimeOffset _lastUpdate = DateTimeOffset.MinValue;
+        private DateTime _lastWriteTime;
+        private readonly ManualResetEvent _resetEvent;
+        private readonly List<int> _versionHashs = new List<int>();
 
         private Task _rootTask;
-        private readonly string _fileUri;
 
-        public TaskRepository() : this(GetDefaultFileLocation())
+        public TaskRepository(bool async = true) : this(GetDefaultFileLocation(), async)
         {
-
         }
 
-        public TaskRepository(string fileUri)
+        public TaskRepository(string fileUri, bool async = true)
         {
             _fileUri = fileUri;
+            var fileInfo = new FileInfo(_fileUri);
+
+            _resetEvent = new ManualResetEvent(false);
+
+            _watcher = new FileChangeWatcher(fileInfo.FullName);
+            _watcher.FileChanged += OnFileChanged;
 
             SetJsonConvertSettings();
             InitRootTask();
         }
 
-        private static string GetDefaultFileLocation()
+        public DateTimeOffset LastUpdate
         {
-            return Path.Combine(PersistenceConstants.AppFolder, "tasks.json");
-        }
-
-        private void InitRootTask()
-        {
-            if (File.Exists(_fileUri))
+            get => _lastUpdate;
+            set
             {
-                string json = File.ReadAllText(_fileUri);
-                try
-                {
-                    _rootTask = json.ParseJsonTo<Task>();
-                }
-                catch (JsonSerializationException e)
-                {
-                    _rootTask = null;
-                }
+                _lastUpdate = value;
+                OnPropertyChanged(nameof(LastUpdate));
             }
-            if (_rootTask == null)
-            {
-                _rootTask = new Task()
-                {
-                    Id = RootTaskId,
-                    Title = "RootTask"
-                };
-            }
-            _rootTask.PropertyChanged += OnRootTaskChanged;
         }
 
-        private void OnRootTaskChanged(object sender, PropertyChangedEventArgs e)
+        public void Dispose()
         {
-            OnPropertyChanged(nameof(_rootTask));
-            Persist();
+            _watcher?.Dispose();
         }
 
-        private static void SetJsonConvertSettings()
-        {
-            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
-            {
-                Formatting = Formatting.Indented,
-                TypeNameHandling = TypeNameHandling.Objects,
-                ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                PreserveReferencesHandling = PreserveReferencesHandling.Objects
-            };
-        }
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public string AddTask(Task task)
         {
             _rootTask.SubTasks.Add(task);
             task.Parent = _rootTask;
 
+            Persist();
             return task.Id;
         }
 
         public string AddSubTask(Task task, string parentId)
         {
             if (string.IsNullOrEmpty(task.Title))
-            {
                 throw new InvalidOperationException("Title must not be empty!");
-            }
 
-            Task parent = GetTaskById(parentId);
-            task.Parent = parent ?? throw new BadStateException("No parent found with id: " + parentId);
+            var parent = GetTaskById(parentId);
+            task.Parent = parent ?? throw new BadStateException("No task found with id: " + parentId);
             parent.SubTasks.Add(task);
 
+            Persist();
             return task.Id;
         }
 
         public Task GetTaskById(string id)
         {
             if (id == RootTaskId)
-            {
                 return _rootTask;
-            }
 
             return GetTaskById(_rootTask, id);
         }
 
-        private Task GetTaskById(Task parent, string id)
-        {
-            foreach (var subTask in parent.SubTasks)
-            {
-                if (subTask.Id == id)
-                {
-                    return subTask;
-                }
-            }
-
-            foreach (var subTask in parent.SubTasks)
-            {
-                Task task = GetTaskById(subTask, id);
-                if (task != null)
-                {
-                    return task;
-                }
-            }
-
-            return null;
-        }
-
         public void RemoveTask(string id)
         {
-            Task task = GetTaskById(id);
+            var task = GetTaskById(id);
 
             if (task != null)
             {
-                Task parent = task.Parent;
-                task.Intervals.ForEach(interval => parent.Intervals.Add(interval));
+                var parent = task.Parent;
+                parent.Intervals.addAll(task.Intervals);
                 parent.SubTasks.Remove(task);
             }
+
+            Persist();
         }
 
         public void UpdateTask(string id, Task task)
         {
-            Task child = GetTaskById(id);
-            Task parent = child.Parent;
-            int index = parent.SubTasks.IndexOf(child);
+            if (id == RootTaskId)
+            {
+                Persist();
+                return;
+            }
+
+            var child = GetTaskById(id);
+            var parent = child.Parent;
+            var index = parent.SubTasks.IndexOf(child);
             parent.SubTasks.RemoveAt(index);
             parent.SubTasks.Insert(index, task);
+            Persist();
         }
 
         public void MoveTask(string taskId, string newParentId)
@@ -207,6 +177,7 @@ namespace KaVE.Tasks.Repository
             oldParent.SubTasks.Remove(task);
             newParent.SubTasks.Insert(position, task);
             task.Parent = newParent;
+            Persist();
         }
 
         public ObservableCollection<Task> GetOpenTasks()
@@ -215,9 +186,7 @@ namespace KaVE.Tasks.Repository
             _rootTask.SubTasks.ForEach(task =>
             {
                 if (task.IsOpen)
-                {
                     openTasks.Add(task);
-                }
             });
 
             return openTasks;
@@ -229,44 +198,141 @@ namespace KaVE.Tasks.Repository
             _rootTask.SubTasks.ForEach(task =>
             {
                 if (!task.IsOpen)
-                {
                     closedTasks.Add(task);
-                }
             });
 
             return closedTasks;
         }
 
-        public void IncreasePriority(Task task)
+        public void IncreasePriority(string taskId)
         {
-            Task parent = task.Parent;
+            var task = GetTaskById(taskId);
+            var parent = task.Parent;
 
             if (parent != null)
-            {
                 ChangePosition(task, true);
+        }
+
+        public void DecreasePriority(string taskId)
+        {
+            var task = GetTaskById(taskId);
+            var parent = task.Parent;
+
+            if (parent != null)
+                ChangePosition(task, false);
+        }
+
+        public void CloseLatestInterval(string taskId, DateTimeOffset endTime)
+        {
+            var task = GetTaskById(taskId);
+            var latestInterval = task.Intervals[task.Intervals.Count - 1];
+            if (latestInterval.IsActive)
+                latestInterval.EndTime = endTime;
+
+            if (task.IsActive)
+                task.Intervals.Add(new Interval
+                {
+                    StartTime = DateTimeOffset.Now
+                });
+            UpdateTask(taskId, task);
+        }
+
+        private static string GetDefaultFileLocation()
+        {
+            return Path.Combine(PersistenceConstants.AppFolder, DefaultFile);
+        }
+
+        private void OnFileChanged(object sender, FileChangedEventArgs args)
+        {
+            var fileInfo = new FileInfo(_fileUri);
+            if (!args.Success || !args.FileInfo.FullName.Equals(fileInfo.FullName)) return;
+            
+            InitRootTask();
+            OnRootTaskChanged(this, null);
+            _resetEvent.Set();
+        }
+
+        private void InitRootTask()
+        {
+            if (File.Exists(_fileUri))
+            {
+                var json = File.ReadAllText(_fileUri);
+                try
+                {
+                    if (IsExternalChange(json.GetHashCode()))
+                    {
+                        _rootTask = json.ParseJsonTo<Task>();
+                        OnRootTaskChanged(this, null);
+                        LastUpdate = DateTimeOffset.Now;
+                    }
+                }
+                catch (JsonSerializationException e)
+                {
+                    _rootTask = null;
+                }
+            }
+            if (_rootTask == null)
+            {
+                _rootTask = new Task
+                {
+                    Id = RootTaskId,
+                    Title = "RootTask"
+                };
+                OnRootTaskChanged(this, null);
+                LastUpdate = DateTimeOffset.Now;
             }
         }
 
-        public void DecreasePriority(Task task)
+        private bool IsExternalChange(int hash)
         {
-            Task parent = task.Parent;
+            if (!_versionHashs.Contains(hash)) return true;
 
-            if (parent != null)
+            _versionHashs.Remove(hash);
+            return false;
+        }
+
+        private void OnRootTaskChanged(object sender, PropertyChangedEventArgs e)
+        {
+            OnPropertyChanged(nameof(_rootTask));
+        }
+
+        private static void SetJsonConvertSettings()
+        {
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {
-                ChangePosition(task, false);
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.Objects,
+                ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                PreserveReferencesHandling = PreserveReferencesHandling.Objects
+            };
+        }
+
+        private Task GetTaskById(Task parent, string id)
+        {
+            foreach (var subTask in parent.SubTasks)
+                if (subTask.Id == id)
+                    return subTask;
+
+            foreach (var subTask in parent.SubTasks)
+            {
+                var task = GetTaskById(subTask, id);
+                if (task != null)
+                    return task;
             }
+
+            return null;
         }
 
         private void ChangePosition(Task task, bool upwards)
         {
-            Task parent = task.Parent;
-            int step = upwards ? -1 : 1;
-            int currentPosition = parent.SubTasks.IndexOf(task);
-            int newPosition = currentPosition;
+            var parent = task.Parent;
+            var step = upwards ? -1 : 1;
+            var currentPosition = parent.SubTasks.IndexOf(task);
+            var newPosition = currentPosition;
 
             if (parent.Id == RootTaskId)
             {
-                for (int i = newPosition + step; i >= 0 && i < parent.SubTasks.Count; i += step)
+                for (var i = newPosition + step; i >= 0 && i < parent.SubTasks.Count; i += step)
                 {
                     if (parent.SubTasks[i].IsOpen == task.IsOpen)
                     {
@@ -281,47 +347,28 @@ namespace KaVE.Tasks.Repository
             }
 
             parent.SubTasks.Move(currentPosition, newPosition);
-        }
-
-        public void CloseLatestInterval(Task task, DateTimeOffset endTime)
-        {
-            var latestInterval = task.Intervals[task.Intervals.Count - 1];
-            if (latestInterval.IsActive)
-            {
-                latestInterval.EndTime = endTime;
-            }
-
-            if (task.IsActive)
-            {
-                task.Intervals.Add(new Interval()
-                {
-                    StartTime = DateTimeOffset.Now
-                });
-            }
+            UpdateTask(parent.Id, parent);
         }
 
         public static ObservableCollection<Task> GetRelevantParentSubTasks(Task task)
         {
             if (task.Parent == null)
-            {
                 return new ObservableCollection<Task>();
-            }
 
             if (task.Parent.Id == RootTaskId)
-            {
                 return new ObservableCollection<Task>(task.Parent.SubTasks
                     .Where(subTask => subTask.IsOpen == task.IsOpen));
-            }
             return task.Parent.SubTasks;
         }
 
         private void Persist()
         {
-            string json = _rootTask.ToCompactJson();
-            File.WriteAllText(_fileUri, json);
+            OnRootTaskChanged(this, null);
+            var json = _rootTask.ToCompactJson();
+            _versionHashs.Add(json.GetHashCode());
+            _lastWriteTime = DateTime.UtcNow;
+            RetryingFileWriter.WriteAllText(_fileUri, json);
         }
-
-        public event PropertyChangedEventHandler PropertyChanged;
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)

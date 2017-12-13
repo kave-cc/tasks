@@ -8,6 +8,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KaVE.Tasks.Tests", "KaVE.Tasks.Tests\KaVE.Tasks.Tests.csproj", "{BDD03F39-38B3-484E-A8F9-10009FF33E7D}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Experimental|Any CPU = Experimental|Any CPU

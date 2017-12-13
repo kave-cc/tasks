@@ -15,6 +15,7 @@
  */
 
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -37,8 +38,11 @@ namespace TaskManagerPlugin.Test.UserControls.ActiveTask
         {
             var settingsMock = new Mock<IIconsSettingsRepository>();
             settingsMock.Setup(mock => mock.Settings).Returns(new IconsSettings());
-            _repository = new TaskRepository(FileUri);
-            _viewModel = new TaskViewModel(_repository, Lifetimes.Define("Lifetime.test").Lifetime,
+
+            _task = new Task();
+            _repositoryMock = new Mock<ITaskRepository>();
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(new ObservableCollection<Task> {_task});
+            _viewModel = new TaskViewModel(_repositoryMock.Object, Lifetimes.Define("Lifetime.test").Lifetime,
                 settingsMock.Object);
             _window = new ActiveTaskWindow(_viewModel);
         }
@@ -49,32 +53,30 @@ namespace TaskManagerPlugin.Test.UserControls.ActiveTask
             File.Delete(FileUri);
         }
 
-        private TaskRepository _repository;
+        private Mock<ITaskRepository> _repositoryMock;
         private ActiveTaskWindow _window;
         private TaskViewModel _viewModel;
+        private Task _task;
         private const string FileUri = "test.json";
 
         [Test]
         public void WhenActivateTaskIsClicked_ShouldActivateTask()
         {
-            _repository.AddTask(new Task {Title = "Title"});
             _window.OpenTasksCombo.SelectedIndex = 0;
             _window.Activate.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
 
-            Assert.AreEqual(_repository.GetOpenTasks()[0], _viewModel.ActiveTask);
+            Assert.AreEqual(_task, _viewModel.ActiveTask);
         }
 
         [Test]
         public void WhenActiveTaskExists_ShouldDisplayTimeSpan()
         {
-            var task = new Task {Title = "Title"};
-            _repository.AddTask(task);
-            task.Intervals.Add(new Interval
+            _task.Intervals.Add(new Interval
             {
                 StartTime = DateTimeOffset.Now.AddMinutes(-10),
                 EndTime = DateTimeOffset.Now
             });
-            _viewModel.ActivateTask(task);
+            _viewModel.ActivateTask(_task);
 
             Assert.AreEqual("Active Time: 10 minutes", _window.ActiveTime.Text);
         }

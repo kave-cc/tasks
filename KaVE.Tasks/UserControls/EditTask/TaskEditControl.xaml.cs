@@ -66,11 +66,10 @@ namespace KaVE.Tasks.UserControls.EditTask
 
         private void BtnSave_Click(object sender, EventArgs e)
         {
-            var original = (Task)Task.Clone();
             SaveTask();
             if (_editMode)
             {
-                _viewModel.OnTaskEdited(original, Task);
+                _viewModel.OnTaskEdited(Task);
             }
             if (!_editMode)
             {

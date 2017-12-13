@@ -15,10 +15,12 @@
  */
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using JetBrains.DataFlow;
+using JetBrains.ReSharper.PsiGen.Util;
 using KaVE.Tasks.Model;
 using KaVE.Tasks.Repository;
 using KaVE.Tasks.UserControls;
@@ -29,7 +31,8 @@ using NUnit.Framework;
 
 namespace TaskManagerPlugin.Test.UserControls.NavigationControl
 {
-    [TestFixture, RequiresSTA]
+    [TestFixture]
+    [RequiresSTA]
     public class TaskContextMenuTest
     {
         [SetUp]
@@ -38,14 +41,17 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             _settingsRepoMock = new Mock<IIconsSettingsRepository>();
             _settingsRepoMock.Setup(mock => mock.Settings).Returns(new IconsSettings());
 
-            var repo = new TaskRepository(FileUri);
-            _task = new Task
-            {
-                Title = "Title"
-            };
+            _root = new Task();
+            _bottomTask = new Task(_root);
+            _topTask = new Task(_root);
 
-            _viewModel = new TaskViewModel(repo, Lifetimes.Define("Test.lifetime").Lifetime, _settingsRepoMock.Object);
-            _viewModel.AddTask(_task);
+            _root.SubTasks.Add(_topTask);
+            _root.SubTasks.Add(_bottomTask);
+            var repoMock = new Mock<ITaskRepository>();
+            repoMock.Setup(mock => mock.GetOpenTasks()).Returns(_root.SubTasks);
+
+            _viewModel = new TaskViewModel(repoMock.Object, Lifetimes.Define("Test.lifetime").Lifetime,
+                _settingsRepoMock.Object);
             _menuContext = new MenuContext();
             _contextMenu = new TaskContextMenu(_menuContext);
             _results = new List<string>();
@@ -58,11 +64,14 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             File.Delete(FileUri);
         }
 
+        private Task _root;
+        private Task _bottomTask;
+        private Task _topTask;
+
         private TaskContextMenu _contextMenu;
         private List<string> _results;
         private TaskViewModel _viewModel;
         private MenuContext _menuContext;
-        private Task _task;
         private Mock<IIconsSettingsRepository> _settingsRepoMock;
 
         private const string FileUri = "test.json";
@@ -156,8 +165,8 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsActive_PauseTaskIsEnabled()
         {
-            _viewModel.ActivateTask(_task);
-            _menuContext.Task = _task;
+            var activeTask = new Task {IsActive = true};
+            _menuContext.Task = activeTask;
 
             Assert.IsTrue(_contextMenu.MenuItemPause.IsEnabled);
             Assert.AreEqual(Visibility.Visible, _contextMenu.MenuItemPause.Visibility);
@@ -166,10 +175,10 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         }
 
         [Test]
-        public void WhenTaskIsClosed_CloseIsEnabled()
+        public void WhenTaskIsClosed_OpenIsEnabled()
         {
-            _viewModel.CompleteTask(_task);
-            _menuContext.Task = _task;
+            var closedTask = new Task {IsOpen = false};
+            _menuContext.Task = closedTask;
 
             Assert.IsTrue(_contextMenu.MenuItemOpen.IsEnabled);
             Assert.AreEqual(Visibility.Visible, _contextMenu.MenuItemOpen.Visibility);
@@ -180,8 +189,8 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsNotActive_PauseTaskIsEnabled()
         {
-            _viewModel.OpenTask(_task);
-            _menuContext.Task = _task;
+            var task = new Task {IsActive = false};
+            _menuContext.Task = task;
 
             Assert.IsTrue(_contextMenu.MenuItemActivate.IsEnabled);
             Assert.AreEqual(Visibility.Visible, _contextMenu.MenuItemActivate.Visibility);
@@ -192,34 +201,32 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsNotOnBottom_MoveDownIsEnabled()
         {
-            var task = new Task
-            {
-                Title = "Title"
-            };
-
-            _viewModel.AddTask(task);
-
-            _menuContext.Task = _task;
+            _menuContext.Task = _topTask;
 
             Assert.IsTrue(_contextMenu.MenuItemMoveDown.IsEnabled);
+        }
+
+        [Test]
+        public void WhenTaskIsOnTop_MoveUpIsDisabled()
+        {
+            _menuContext.Task = _topTask;
+
             Assert.IsFalse(_contextMenu.MenuItemMoveUp.IsEnabled);
         }
 
         [Test]
         public void WhenTaskIsNotOnTop_MoveUpIsEnabled()
         {
-            _viewModel.OpenTask(_task);
-
-            var task = new Task
-            {
-                Title = "Title"
-            };
-
-            _viewModel.AddTask(task);
-
-            _menuContext.Task = task;
+            _menuContext.Task = _bottomTask;
 
             Assert.IsTrue(_contextMenu.MenuItemMoveUp.IsEnabled);
+        }
+
+        [Test]
+        public void WhenTaskIsOnBottom_MoveDownIsDisabled()
+        {
+            _menuContext.Task = _bottomTask;
+;
             Assert.IsFalse(_contextMenu.MenuItemMoveDown.IsEnabled);
         }
 
@@ -235,8 +242,8 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsOpen_CloseIsEnabled()
         {
-            _viewModel.OpenTask(_task);
-            _menuContext.Task = _task;
+            var openTask = new Task {IsOpen = true};
+            _menuContext.Task = openTask;
 
             Assert.IsTrue(_contextMenu.MenuItemClose.IsEnabled);
             Assert.AreEqual(Visibility.Visible, _contextMenu.MenuItemClose.Visibility);

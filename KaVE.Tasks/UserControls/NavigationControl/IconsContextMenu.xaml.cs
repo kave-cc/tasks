@@ -15,6 +15,7 @@
  */
 
 using System.Windows.Controls;
+using KaVE.Tasks.UserControls.NavigationControl.Settings;
 
 namespace KaVE.Tasks.UserControls.NavigationControl
 {
@@ -23,11 +24,9 @@ namespace KaVE.Tasks.UserControls.NavigationControl
     /// </summary>
     public partial class IconsContextMenu : ContextMenu
     {
-        private readonly Settings.IconsSettings _iconsSettings;
         public IconsContextMenu(Settings.IconsSettings iconsSettings)
         {
-            _iconsSettings = iconsSettings;
-            DataContext = _iconsSettings;
+            DataContext = iconsSettings;
             InitializeComponent();
         }
     }

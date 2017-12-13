@@ -22,6 +22,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using Appccelerate.StateMachine;
 using JetBrains.Annotations;
+using JetBrains.Util;
 using KaVE.Commons.Model.Events.Enums;
 using KaVE.Tasks.Util;
 using Newtonsoft.Json;
@@ -144,10 +145,13 @@ namespace KaVE.Tasks.Model
 
         public void UnPause()
         {
-            var activeInterval = Intervals[Intervals.Count - 1];
-            if (activeInterval.IsClosed)
+            if (!Intervals.IsEmpty())
             {
-                Intervals.Add(new Interval());
+                var activeInterval = Intervals[Intervals.Count - 1];
+                if (activeInterval.IsClosed)
+                {
+                    Intervals.Add(new Interval());
+                }
             }
         }
 

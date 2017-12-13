@@ -325,6 +325,9 @@
     <Compile Include="UserControls\TaskViewModel.cs" />
     <Compile Include="Events\TaskEventArgs.cs" />
     <Compile Include="Events\TaskMovedEventArgs.cs" />
+    <Compile Include="Util\FileUtil\RetryingFileWriter.cs" />
+    <Compile Include="Util\FileUtil\FileChangeWatcher.cs" />
+    <Compile Include="Util\FileUtil\FileUtils.cs" />
     <Compile Include="Util\LikertToStringConverter.cs" />
     <Compile Include="Util\MinutesToDurationConverter.cs" />
     <Compile Include="Util\PersistenceConstants.cs" />

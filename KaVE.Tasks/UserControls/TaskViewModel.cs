@@ -108,7 +108,7 @@ namespace KaVE.Tasks.UserControls
 
         public void AddTask(Task task)
         {
-            _repository.AddSubTask(task, TaskRepository.RootTaskId);
+            _repository.AddTask(task);
             OnTaskCreated(task);
         }
 
@@ -132,7 +132,7 @@ namespace KaVE.Tasks.UserControls
 
         public void ActivateTask(Task task)
         {
-            if (task == ActiveTask) return;
+            if (Equals(task, ActiveTask)) return;
 
             ActiveTask?.Open();
             task.Activate();
@@ -151,6 +151,11 @@ namespace KaVE.Tasks.UserControls
             }
             task.Close();
             OnTaskChanged(task, TaskAction.Complete);
+            UpdateTask(task);
+        }
+
+        public void UpdateTask(Task task)
+        {
             _repository.UpdateTask(task.Id, task);
         }
 
@@ -195,17 +200,17 @@ namespace KaVE.Tasks.UserControls
 
         public void IncreasePriority(Task task)
         {
-            _repository.IncreasePriority(task);
+            _repository.IncreasePriority(task.Id);
         }
 
         public void DecreasePriority(Task task)
         {
-            _repository.DecreasePriority(task);
+            _repository.DecreasePriority(task.Id);
         }
 
         public void FinishActiveIntervalAt(DateTimeOffset dateTime)
         {
-            _repository.CloseLatestInterval(ActiveTask, dateTime);
+            _repository.CloseLatestInterval(ActiveTask.Id, dateTime);
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -228,7 +233,7 @@ namespace KaVE.Tasks.UserControls
             TaskChange?.Invoke(this, args);
         }
 
-        public virtual void OnTaskEdited(Task task, Task newVersion)
+        public virtual void OnTaskEdited(Task task)
         {
             var args = new TaskEventArgs(task, TaskAction.Edit);
             TaskChange?.Invoke(this, args);

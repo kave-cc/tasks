@@ -31,19 +31,12 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
     {
         private IconsSettings _iconsSettings;
         private IconsContextMenu _menu;
-        private const string FileUri = "testSettings.json";
 
         [SetUp]
         public void SetUp()
         {
             _iconsSettings = new IconsSettings();
             _menu = new IconsContextMenu(_iconsSettings);
-        }
-
-        [TearDown]
-        public void CleanUp()
-        {
-            File.Delete(FileUri);
         }
 
         [Test]

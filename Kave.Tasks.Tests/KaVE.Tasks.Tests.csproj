@@ -296,6 +296,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserControls\TaskDetail\TaskDetailControlTest.cs" />
     <Compile Include="UserControls\TaskViewModelTest.cs" />
+    <Compile Include="Util\FileUtil\RetryingFileWriterTest.cs" />
+    <Compile Include="Util\FileUtil\FileChangeWatcherTest.cs" />
+    <Compile Include="Util\FileUtil\FileUtilsTest.cs" />
     <Compile Include="Util\LikertToStringConverterTest.cs" />
     <Compile Include="Util\MinutesToDurationConverterTest.cs" />
     <Compile Include="Util\SingleLineConverterTest.cs" />

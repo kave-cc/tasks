@@ -15,6 +15,7 @@
  */
 
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,8 +37,10 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         private List<string> _results;
         private TaskViewModel _viewModel;
         private MenuContext _menuContext;
-        private Task _task;
         private Mock<IIconsSettingsRepository> _settingsRepoMock;
+        private Task _root;
+        private Task _bottomTask;
+        private Task _topTask;
 
         private const string FileUri = "test.json";
 
@@ -47,14 +50,17 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
             _settingsRepoMock = new Mock<IIconsSettingsRepository>();
             _settingsRepoMock.Setup(mock => mock.Settings).Returns(new IconsSettings());
 
-            var repo = new TaskRepository(FileUri);
-            _task = new Task
-            {
-                Title = "Title"
-            };
+            _root = new Task();
+            _bottomTask = new Task(_root);
+            _topTask = new Task(_root);
 
-            _viewModel = new TaskViewModel(repo, Lifetimes.Define("Test.lifetime").Lifetime, _settingsRepoMock.Object);
-            _viewModel.AddTask(_task);
+            _root.SubTasks.Add(_topTask);
+            _root.SubTasks.Add(_bottomTask);
+            var repositoryMock = new Mock<ITaskRepository>();
+            repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(_root.SubTasks);
+
+            _viewModel = new TaskViewModel(repositoryMock.Object, Lifetimes.Define("Test.lifetime").Lifetime, _settingsRepoMock.Object);
+
             _menuContext = new MenuContext();
             _menuBar = new MenuBar(_menuContext);
             _results = new List<string>();
@@ -174,8 +180,8 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsActive_PauseTaskIsEnabled()
         {
-            _viewModel.ActivateTask(_task);
-            _menuContext.Task = _task;
+            var activeTask = new Task {IsActive = true};
+            _menuContext.Task = activeTask;
 
             Assert.IsTrue(_menuBar.MenuItemPause.IsEnabled);
             Assert.AreEqual(Visibility.Visible, _menuBar.MenuItemPause.Visibility);
@@ -186,8 +192,8 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsClosed_CloseIsEnabled()
         {
-            _viewModel.CompleteTask(_task);
-            _menuContext.Task = _task;
+            var closedTask = new Task {IsOpen = false};
+            _menuContext.Task = closedTask;
 
             Assert.IsTrue(_menuBar.MenuItemOpen.IsEnabled);
             Assert.AreEqual(Visibility.Visible, _menuBar.MenuItemOpen.Visibility);
@@ -198,8 +204,8 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsNotActive_PauseTaskIsEnabled()
         {
-            _viewModel.OpenTask(_task);
-            _menuContext.Task = _task;
+            var openTask = new Task {IsOpen = true};
+            _menuContext.Task = openTask;
 
             Assert.IsTrue(_menuBar.MenuItemActivate.IsEnabled);
             Assert.AreEqual(Visibility.Visible, _menuBar.MenuItemActivate.Visibility);
@@ -210,36 +216,35 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsNotOnBottom_MoveDownIsEnabled()
         {
-            var task = new Task
-            {
-                Title = "Title"
-            };
-
-            _viewModel.AddTask(task);
-
-            _menuContext.Task = _task;
+            _menuContext.Task = _topTask;
 
             Assert.IsTrue(_menuBar.MenuItemMoveDown.IsEnabled);
+        }
+
+        [Test]
+        public void WhenTaskIsOnTop_MoveUpIsDisabled()
+        {
+            _menuContext.Task = _topTask;
+
             Assert.IsFalse(_menuBar.MenuItemMoveUp.IsEnabled);
         }
 
         [Test]
         public void WhenTaskIsNotOnTop_MoveUpIsEnabled()
         {
-            _viewModel.OpenTask(_task);
-
-            var task = new Task
-            {
-                Title = "Title"
-            };
-
-            _viewModel.AddTask(task);
-
-            _menuContext.Task = task;
+            _menuContext.Task = _bottomTask;
 
             Assert.IsTrue(_menuBar.MenuItemMoveUp.IsEnabled);
+        }
+
+        [Test]
+        public void WhenTaskIsOnBottom_MoveDownIsDisabled()
+        {
+            _menuContext.Task = _bottomTask;
+            
             Assert.IsFalse(_menuBar.MenuItemMoveDown.IsEnabled);
         }
+
 
         [Test]
         public void WhenTaskIsNull_AllAreDisabled()
@@ -253,8 +258,8 @@ namespace TaskManagerPlugin.Test.UserControls.NavigationControl
         [Test]
         public void WhenTaskIsOpen_CloseIsEnabled()
         {
-            _viewModel.OpenTask(_task);
-            _menuContext.Task = _task;
+            var openTask = new Task {IsOpen = true};
+            _menuContext.Task = openTask;
 
             Assert.IsTrue(_menuBar.MenuItemClose.IsEnabled);
             Assert.AreEqual(Visibility.Visible, _menuBar.MenuItemClose.Visibility);

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Configuration.Internal;
 using System.IO;
 using JetBrains.DataFlow;
@@ -37,7 +39,7 @@ namespace TaskManagerPlugin.Test.UserControls
     public class TaskViewModelTest
     {
         private const string FileUri = "test.json";
-        private TaskRepository _repository;
+        private Mock<ITaskRepository> _repositoryMock;
         private TaskEventGenerator _generator;
         private Mock<IIconsSettingsRepository> _settingsRepoMock;
         private TaskEventArgs _eventArgs;
@@ -50,7 +52,7 @@ namespace TaskManagerPlugin.Test.UserControls
             _settingsRepoMock = new Mock<IIconsSettingsRepository>();
             _settingsRepoMock.Setup(mock => mock.Settings).Returns(new IconsSettings());
 
-            _repository = new TaskRepository(FileUri);
+            _repositoryMock = new Mock<ITaskRepository>();
             var messageBus = new Mock<IMessageBus>();
             var env = new Mock<IRSEnv>();
             var dateUtils = new Mock<IDateUtils>();
@@ -67,22 +69,12 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenActiveTaskIsStored_ShouldSetActiveTask()
         {
-            var openTask = new Task()
-            {
-                Title = "Title"
-            };
-            openTask.Open();
+            var activeTask = new Task {IsActive = true};
+            activeTask.Intervals.Add(new Interval());
+            var tasks = new ObservableCollection<Task> {activeTask};
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(tasks);
 
-            var activeTask = new Task()
-            {
-                Title = "Title"
-            };
-            activeTask.Activate();
-
-            _repository.AddTask(openTask);
-            _repository.AddSubTask(activeTask, openTask.Id);
-
-            var viewModel = new TaskViewModel(_repository, Lifetimes.Define("Test.lifetime").Lifetime,
+            var viewModel = new TaskViewModel(_repositoryMock.Object, Lifetimes.Define("Test.lifetime").Lifetime,
                 _settingsRepoMock.Object, _generator);
 
             Assert.AreEqual(activeTask, viewModel.ActiveTask);
@@ -91,15 +83,11 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenNoActiveTaskIsStored_ShouldNullActiveTask()
         {
-            var openTask = new Task()
-            {
-                Title = "Title"
-            };
-            openTask.Open();
+            var task = new Task();
+            var tasks = new ObservableCollection<Task> { task };
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(tasks);
 
-            _repository.AddTask(openTask);
-
-            var viewModel = new TaskViewModel(_repository, Lifetimes.Define("Test.lifetime").Lifetime,
+            var viewModel = new TaskViewModel(_repositoryMock.Object, Lifetimes.Define("Test.lifetime").Lifetime,
                 _settingsRepoMock.Object, _generator);
 
             Assert.IsNull(viewModel.ActiveTask);
@@ -108,14 +96,14 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenLifetimeIsTerminated_ShouldCloseActiveTask()
         {
-            var activeTask = new Task()
-            {
-                Title = "Title"
-            };
+            var activeTask = new Task {IsActive = true};
+            activeTask.Intervals.Add(new Interval());
+            var tasks = new ObservableCollection<Task> { activeTask };
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(tasks);
+            
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
-            var viewModel = new TaskViewModel(_repository, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
-
-            _repository.AddTask(activeTask);
+            var viewModel = new TaskViewModel(_repositoryMock.Object, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
+            
             viewModel.ActivateTask(activeTask);
 
             lifetimeDefinition.Terminate();
@@ -124,15 +112,16 @@ namespace TaskManagerPlugin.Test.UserControls
             Assert.IsTrue(interval.IsClosed);
         }
 
-        [Test]
+       [Test]
         public void WhenRepositoryIsRestarted_ShouldCreateNewIntervalOnActiveTask()
         {
-            var task = new Task()
-            {
-                Title = "Title"
-            };
+            var task = new Task { IsActive = true };
+            task.Intervals.Add(new Interval());
+            var tasks = new ObservableCollection<Task> { task };
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(tasks);
+
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
-            var viewModel = new TaskViewModel(_repository, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
+            var viewModel = new TaskViewModel(_repositoryMock.Object, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
             viewModel.AddTask(task);
             viewModel.ActivateTask(task);
 
@@ -140,7 +129,7 @@ namespace TaskManagerPlugin.Test.UserControls
 
             Assert.AreEqual(1, task.Intervals.Count);
 
-            var viewModel2 = new TaskViewModel(_repository, Lifetimes.Define("Test.lifetime").Lifetime,
+            var viewModel2 = new TaskViewModel(_repositoryMock.Object, Lifetimes.Define("Test.lifetime").Lifetime,
                 _settingsRepoMock.Object);
             var activeTask = viewModel2.ActiveTask;
 
@@ -152,13 +141,19 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenTaskIsMoved_FiresTaskMoveEvent()
         {
-            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
-            var viewModel = new TaskViewModel(_repository, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
-            viewModel.TaskChange += OnReceiveEvent;
             var task = new Task() { Title = "Title" };
-            var task2 = new Task() { Title = "Title" };
-            viewModel.AddTask(task);
-            viewModel.AddTask(task2);
+            var task2 = new Task() { Title = "Title2" };
+            var root = new Task() { SubTasks = new ObservableCollection<Task>() { task, task2 }};
+
+            task.Parent = root;
+            task2.Parent = root;
+
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(root.SubTasks);
+            _repositoryMock.Setup(mock => mock.MoveTaskTo(task.Id, task2.Id, It.IsAny<int>()));
+            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
+
+            var viewModel = new TaskViewModel(_repositoryMock.Object, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
+            viewModel.TaskChange += OnReceiveEvent;
 
             viewModel.MoveSubtask(task2, task);
 
@@ -168,8 +163,11 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenTaskIsCreated_FiresTaskCreateEvent()
         {
+            _repositoryMock.Setup(mock => mock.AddTask(It.IsAny<Task>())).Returns("ID");
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(new ObservableCollection<Task>());
+
             LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
-            var viewModel = new TaskViewModel(_repository, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
+            var viewModel = new TaskViewModel(_repositoryMock.Object, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
             viewModel.TaskChange += OnReceiveEvent;
             var task = new Task() { Title = "Title" };
 
@@ -181,12 +179,13 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenTaskIsActivated_FiresTaskActivateEvent()
         {
-            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
-            var viewModel = new TaskViewModel(_repository, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
-            viewModel.TaskChange += OnReceiveEvent;
-            var task = new Task() { Title = "Title" };
+            var task = new Task();
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(new ObservableCollection<Task>());
 
-            viewModel.AddTask(task);
+            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
+            var viewModel = new TaskViewModel(_repositoryMock.Object, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
+            viewModel.TaskChange += OnReceiveEvent;
+            
             viewModel.ActivateTask(task);
 
             Assert.AreEqual(TaskAction.Activate, _eventArgs.Action);
@@ -195,12 +194,12 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenTaskIsPaused_FiresTaskPauseEvent()
         {
-            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
-            var viewModel = new TaskViewModel(_repository, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
-            viewModel.TaskChange += OnReceiveEvent;
-            var task = new Task() {Title = "Title"};
+            var task = new Task();
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(new ObservableCollection<Task>());
 
-            viewModel.AddTask(task);
+            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
+            var viewModel = new TaskViewModel(_repositoryMock.Object, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
+            viewModel.TaskChange += OnReceiveEvent;
             viewModel.ActivateTask(task);
             viewModel.OpenTask(task);
 
@@ -210,13 +209,12 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenTaskIsCompleted_FiresTaskCompleteEvent()
         {
-            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
-            var viewModel = new TaskViewModel(_repository, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
-            viewModel.TaskChange += OnReceiveEvent;
-            var task = new Task() { Title = "Title" };
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(new ObservableCollection<Task>());
 
-            viewModel.AddTask(task);
-            viewModel.CompleteTask(task);
+            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
+            var viewModel = new TaskViewModel(_repositoryMock.Object, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
+            viewModel.TaskChange += OnReceiveEvent;
+            viewModel.CompleteTask(new Task());
 
             Assert.AreEqual(TaskAction.Complete, _eventArgs.Action);
         }
@@ -224,17 +222,19 @@ namespace TaskManagerPlugin.Test.UserControls
         [Test]
         public void WhenTaskIsReopened_FiresTaskUndoCompleteEvent()
         {
-            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
-            var viewModel = new TaskViewModel(_repository, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
-            viewModel.TaskChange += OnReceiveEvent;
-            var task = new Task() { Title = "Title" };
+            var task = new Task() { IsOpen = false };
+            var openTasks = new ObservableCollection<Task> { task };
+            _repositoryMock.Setup(mock => mock.GetOpenTasks()).Returns(new ObservableCollection<Task>());
 
-            viewModel.AddTask(task);
-            viewModel.CompleteTask(task);
+            LifetimeDefinition lifetimeDefinition = Lifetimes.Define("Test.lifetime");
+            var viewModel = new TaskViewModel(_repositoryMock.Object, lifetimeDefinition.Lifetime, _settingsRepoMock.Object);
+            viewModel.TaskChange += OnReceiveEvent;
+            
             viewModel.OpenTask(task);
 
             Assert.AreEqual(TaskAction.UndoComplete, _eventArgs.Action);
         }
+
         private void OnReceiveEvent(object sender, TaskEventArgs args)
         {
             _eventArgs = args;
