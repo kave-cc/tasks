@@ -18,7 +18,7 @@ using System.Runtime.InteropServices;
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
-[assembly: InternalsVisibleTo("KaVE.Tasks.Test")]
+[assembly: InternalsVisibleTo("KaVE.Tasks.Tests")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("4304740e-cebd-4584-9e13-6c5dffdd8a71")]
