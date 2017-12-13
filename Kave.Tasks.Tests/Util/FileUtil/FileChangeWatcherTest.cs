@@ -113,7 +113,7 @@ namespace KaVE.Tasks.Test.Util.FileUtil
             WriteDummyText();
             var s2 = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.None);
 
-            await _signal.WaitAsync();
+            await _signal.WaitAsync(2000);
 
             s2.Close();
 
