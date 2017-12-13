@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using KaVE.Tasks.Util.FileUtil;
 using NUnit.Framework;
 
-namespace TaskManagerPlugin.Test.Util.FileUtil
+namespace KaVE.Tasks.Test.Util.FileUtil
 {
     [TestFixture]
     internal class FileUtilsTest

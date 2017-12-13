@@ -9,8 +9,8 @@
     <ProjectGuid>{BDD03F39-38B3-484E-A8F9-10009FF33E7D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TaskManagerPlugin.Test</RootNamespace>
-    <AssemblyName>TaskManagerPlugin.Test</AssemblyName>
+    <RootNamespace>KaVE.Tasks.Test</RootNamespace>
+    <AssemblyName>KaVE.Tasks.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

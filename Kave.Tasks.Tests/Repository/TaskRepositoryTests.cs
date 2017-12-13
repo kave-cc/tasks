@@ -21,7 +21,7 @@ using KaVE.Tasks.Model;
 using KaVE.Tasks.Repository;
 using NUnit.Framework;
 
-namespace TaskManagerPlugin.Test.Repository
+namespace KaVE.Tasks.Test.Repository
 {
     [TestFixture]
     public class TaskRepositoryTests

@@ -28,7 +28,7 @@ using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using Moq;
 using NUnit.Framework;
 
-namespace TaskManagerPlugin.Test.UserControls.NavigationControl
+namespace KaVE.Tasks.Test.UserControls.NavigationControl
 {
     [TestFixture, RequiresSTA]
     public class MenuBarTest

@@ -33,7 +33,7 @@ using KaVE.VS.Commons.Generators;
 using Moq;
 using NUnit.Framework;
 
-namespace TaskManagerPlugin.Test.UserControls
+namespace KaVE.Tasks.Test.UserControls
 {
     [TestFixture]
     public class TaskViewModelTest

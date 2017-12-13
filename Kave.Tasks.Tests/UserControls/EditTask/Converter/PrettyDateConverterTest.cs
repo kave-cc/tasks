@@ -17,7 +17,7 @@ using System;
 using KaVE.Tasks.UserControls.TaskDetail.Converter;
 using NUnit.Framework;
 
-namespace TaskManagerPlugin.Test.UserControls.EditTask.Converter
+namespace KaVE.Tasks.Test.UserControls.EditTask.Converter
 {
     [TestFixture]
     public class PrettyDateConverterTest

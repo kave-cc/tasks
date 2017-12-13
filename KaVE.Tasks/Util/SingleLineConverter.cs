@@ -21,7 +21,7 @@ using JetBrains.Util;
 
 namespace KaVE.Tasks.Util
 {
-    class SingleLineConverter : IValueConverter
+    public class SingleLineConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {

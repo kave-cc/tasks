@@ -17,7 +17,7 @@ using System.IO;
 using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using NUnit.Framework;
 
-namespace TaskManagerPlugin.Test.UserControls.NavigationControl.Settings
+namespace KaVE.Tasks.Test.UserControls.NavigationControl.Settings
 {
     [TestFixture]
     public class IconsSettingsRepositoryTest

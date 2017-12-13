@@ -21,7 +21,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TaskManagerPlugin.Test
+namespace KaVE.Tasks.Test
 {
     [TestClass]
     public class TestAssemblyInitialize

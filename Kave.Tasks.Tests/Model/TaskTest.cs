@@ -19,7 +19,7 @@ using KaVE.Commons.Model.Events.Enums;
 using KaVE.Tasks.Model;
 using NUnit.Framework;
 
-namespace TaskManagerPlugin.Test.Model
+namespace KaVE.Tasks.Test.Model
 {
     [TestFixture]
     public class TaskTest

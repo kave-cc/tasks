@@ -28,7 +28,7 @@ using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using Moq;
 using NUnit.Framework;
 
-namespace TaskManagerPlugin.Test.UserControls.ActiveTask
+namespace KaVE.Tasks.Test.UserControls.ActiveTask
 {
     [TestFixture, RequiresSTA]
     public class ActiveTaskWindowTest

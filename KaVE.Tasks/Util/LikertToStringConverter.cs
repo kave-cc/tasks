@@ -21,7 +21,7 @@ using KaVE.Commons.Model.Events.Enums;
 
 namespace KaVE.Tasks.Util
 {
-    class LikertToStringConverter : IValueConverter
+    public class LikertToStringConverter : IValueConverter
     {
         private static readonly string[] Strings = new[] { "Unknown", "Very Low", "Low", "Normal", "High", "Very High" };
 
