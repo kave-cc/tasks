@@ -21,48 +21,46 @@ using KaVE.Tasks.Model;
 using KaVE.Tasks.Repository;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.Repository
+namespace KaVE.Tasks.Tests.Repository
 {
-    [TestFixture]
     public class TaskRepositoryTests
     {
+        private string _dirRepo;
+        private string _fileRepo;
+
+        private TaskRepository _sut;
+
         [SetUp]
         public void SetUp()
         {
-            _counter++;
-            Directory.CreateDirectory(TestDirectory);
-            _repository = new TaskRepository(Path.Combine(TestDirectory, FileBase + _counter.ToString()), false);
+            _dirRepo = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            _fileRepo = Path.Combine(_dirRepo, "repo.json");
+            Console.WriteLine("Working with repository {0}", _fileRepo);
+            _sut = new TaskRepository(_fileRepo);
         }
 
         [TearDown]
         public void Cleanup()
         {
-            File.Delete(FileBase + _counter.ToString());
-            _repository.Dispose();
+            _sut.Dispose();
+            if (Directory.Exists(_dirRepo))
+            {
+                try
+                {
+                    Directory.Delete(_dirRepo, true);
+                }
+                catch
+                {
+                    Directory.Delete(_dirRepo, true);
+                }
+            }
         }
-
-        [TestFixtureSetUp]
-        public void TestFixtureSetUp()
-        {
-            Directory.CreateDirectory(TestDirectory);
-        }
-
-        [TestFixtureTearDown]
-        public void TestFixtureTearDown()
-        {
-            Directory.Delete(TestDirectory, true);
-        }
-
-        private const string FileBase = "test.json";
-        private const string TestDirectory = "TaskRepositoryTest";
-        private int _counter;
-        private TaskRepository _repository;
 
         [Test]
-        public void ShouldCreateFile()
+        public void ShouldCreateFolderAndFileOnFirstStart()
         {
-            _repository.AddTask(new Task());
-            Assert.IsTrue(File.Exists(Path.Combine(TestDirectory, FileBase + _counter.ToString())));
+            Assert.IsTrue(Directory.Exists(_dirRepo));
+            Assert.IsTrue(File.Exists(_fileRepo));
         }
 
         [Test]
@@ -83,11 +81,11 @@ namespace KaVE.Tasks.Test.Repository
             };
             subTask.Intervals.Add(interval);
 
-            var parentId = _repository.AddTask(task);
-            var childId = _repository.AddSubTask(subTask, parentId);
-            _repository.RemoveTask(childId);
+            var parentId = _sut.AddTask(task);
+            var childId = _sut.AddSubTask(subTask, parentId);
+            _sut.RemoveTask(childId);
 
-            var retrievedTask = _repository.GetTaskById(parentId);
+            var retrievedTask = _sut.GetTaskById(parentId);
 
             Assert.IsTrue(retrievedTask.Intervals.Contains(interval));
         }
@@ -108,13 +106,13 @@ namespace KaVE.Tasks.Test.Repository
                 Title = "Title"
             };
 
-            var parent1Id = _repository.AddTask(parent1);
-            var parent2Id = _repository.AddTask(parent2);
-            var childId = _repository.AddSubTask(child, parent1Id);
+            var parent1Id = _sut.AddTask(parent1);
+            var parent2Id = _sut.AddTask(parent2);
+            var childId = _sut.AddSubTask(child, parent1Id);
 
-            _repository.MoveTask(childId, parent2Id);
-            var childTask = _repository.GetTaskById(childId);
-            var newParentTask = _repository.GetTaskById(parent2Id);
+            _sut.MoveTask(childId, parent2Id);
+            var childTask = _sut.GetTaskById(childId);
+            var newParentTask = _sut.GetTaskById(parent2Id);
 
             Assert.IsTrue(newParentTask.SubTasks.Contains(childTask));
         }
@@ -134,11 +132,11 @@ namespace KaVE.Tasks.Test.Repository
             };
             closedTask.Close();
 
-            _repository.AddTask(openTask);
-            _repository.AddTask(closedTask);
-            _repository.AddTask(closedTask);
+            _sut.AddTask(openTask);
+            _sut.AddTask(closedTask);
+            _sut.AddTask(closedTask);
 
-            var results = _repository.GetClosedTasks();
+            var results = _sut.GetClosedTasks();
 
             Assert.AreEqual(2, results.Count);
             foreach (var task in results)
@@ -160,11 +158,11 @@ namespace KaVE.Tasks.Test.Repository
             };
             closedTask.Close();
 
-            _repository.AddTask(openTask);
-            _repository.AddTask(openTask);
-            _repository.AddTask(closedTask);
+            _sut.AddTask(openTask);
+            _sut.AddTask(openTask);
+            _sut.AddTask(closedTask);
 
-            var results = _repository.GetOpenTasks();
+            var results = _sut.GetOpenTasks();
 
             Assert.AreEqual(2, results.Count);
             foreach (var task in results)
@@ -178,10 +176,10 @@ namespace KaVE.Tasks.Test.Repository
             {
                 Title = "Title"
             };
-            var id = _repository.AddTask(task);
+            var id = _sut.AddTask(task);
 
-            _repository.RemoveTask(id);
-            var retrievedTask = _repository.GetTaskById(id);
+            _sut.RemoveTask(id);
+            var retrievedTask = _sut.GetTaskById(id);
 
             Assert.IsNull(retrievedTask);
         }
@@ -198,13 +196,13 @@ namespace KaVE.Tasks.Test.Repository
                 Title = "Title"
             };
 
-            var parentId = _repository.AddTask(task);
+            var parentId = _sut.AddTask(task);
             Thread.Sleep(1000);
-            var childId = _repository.AddSubTask(subTask, parentId);
+            var childId = _sut.AddSubTask(subTask, parentId);
             Thread.Sleep(1000);
-            var retrievedTask = _repository.GetTaskById(parentId);
+            var retrievedTask = _sut.GetTaskById(parentId);
             Thread.Sleep(1000);
-            var retrievedSubTask = _repository.GetTaskById(childId);
+            var retrievedSubTask = _sut.GetTaskById(childId);
 
             Assert.IsTrue(retrievedTask.SubTasks.Contains(subTask));
             Assert.AreEqual(task, retrievedTask);
@@ -220,10 +218,10 @@ namespace KaVE.Tasks.Test.Repository
             };
             task.Title = "Title";
             task.Description = "Description";
-            var id = _repository.AddTask(task);
+            var id = _sut.AddTask(task);
 
             Thread.Sleep(1000);
-            var retrievedTask = _repository.GetTaskById(id);
+            var retrievedTask = _sut.GetTaskById(id);
 
             Assert.AreEqual(task, retrievedTask);
         }
@@ -236,11 +234,11 @@ namespace KaVE.Tasks.Test.Repository
                 Title = "Title"
             };
 
-            var id = _repository.AddTask(task);
+            var id = _sut.AddTask(task);
             task.Title = "Title2";
-            _repository.UpdateTask(id, task);
+            _sut.UpdateTask(id, task);
 
-            var retrievedTask = _repository.GetTaskById(id);
+            var retrievedTask = _sut.GetTaskById(id);
 
             Assert.AreEqual("Title2", retrievedTask.Title);
         }
@@ -260,9 +258,9 @@ namespace KaVE.Tasks.Test.Repository
             };
 
             task.Intervals.Add(interval);
-            _repository.AddTask(task);
+            _sut.AddTask(task);
 
-            _repository.CloseLatestInterval(task.Id, DateTimeOffset.Now);
+            _sut.CloseLatestInterval(task.Id, DateTimeOffset.Now);
 
             Assert.AreEqual(1, task.Intervals.Count);
             Assert.AreEqual(interval, task.Intervals[0]);
@@ -283,12 +281,12 @@ namespace KaVE.Tasks.Test.Repository
             };
 
             task.Intervals.Add(interval);
-            _repository.AddTask(task);
+            _sut.AddTask(task);
             var endDateTime = DateTimeOffset.Now;
 
-            _repository.CloseLatestInterval(task.Id, endDateTime);
+            _sut.CloseLatestInterval(task.Id, endDateTime);
 
-            var retrievedTask = _repository.GetTaskById(task.Id);
+            var retrievedTask = _sut.GetTaskById(task.Id);
 
             Assert.AreEqual(2, retrievedTask.Intervals.Count);
             Assert.AreEqual(endDateTime, retrievedTask.Intervals[0].EndTime);
@@ -307,12 +305,12 @@ namespace KaVE.Tasks.Test.Repository
                 Title = "Title"
             };
 
-            _repository.AddTask(task1);
-            var id2 = _repository.AddTask(task2);
+            _sut.AddTask(task1);
+            var id2 = _sut.AddTask(task2);
 
-            _repository.MoveTaskTo(id2, TaskRepository.RootTaskId, 0);
+            _sut.MoveTaskTo(id2, TaskRepository.RootTaskId, 0);
 
-            var rootTask = _repository.GetTaskById(TaskRepository.RootTaskId);
+            var rootTask = _sut.GetTaskById(TaskRepository.RootTaskId);
 
             Assert.AreEqual(2, rootTask.SubTasks.Count);
             Assert.AreEqual(task2, rootTask.SubTasks[0]);
@@ -345,16 +343,16 @@ namespace KaVE.Tasks.Test.Repository
                 Title = "Title"
             };
 
-            var parentId = _repository.AddTask(parent);
-            var idClosed1 =_repository.AddSubTask(closedTask1, parentId);
-            _repository.AddSubTask(openTask, parentId);
-            _repository.AddSubTask(closedTask2, parentId);
+            var parentId = _sut.AddTask(parent);
+            var idClosed1 = _sut.AddSubTask(closedTask1, parentId);
+            _sut.AddSubTask(openTask, parentId);
+            _sut.AddSubTask(closedTask2, parentId);
 
-            _repository.DecreasePriority(idClosed1);
-            var fetchedParentTask = _repository.GetTaskById(parentId);
+            _sut.DecreasePriority(idClosed1);
+            var fetchedParentTask = _sut.GetTaskById(parentId);
 
             Assert.AreEqual(3, fetchedParentTask.SubTasks.Count);
-             Assert.AreEqual(openTask, fetchedParentTask.SubTasks[0]);
+            Assert.AreEqual(openTask, fetchedParentTask.SubTasks[0]);
             Assert.AreEqual(closedTask1, fetchedParentTask.SubTasks[1]);
             Assert.AreEqual(closedTask2, fetchedParentTask.SubTasks[2]);
         }
@@ -385,13 +383,13 @@ namespace KaVE.Tasks.Test.Repository
                 Title = "Title"
             };
 
-            var parentId = _repository.AddTask(parentTask);
-            _repository.AddSubTask(closedTask1, parentId);
-            _repository.AddSubTask(openTask, parentId);
-            var closed2Id = _repository.AddSubTask(closedTask2, parentId);
+            var parentId = _sut.AddTask(parentTask);
+            _sut.AddSubTask(closedTask1, parentId);
+            _sut.AddSubTask(openTask, parentId);
+            var closed2Id = _sut.AddSubTask(closedTask2, parentId);
 
-            _repository.IncreasePriority(closed2Id);
-            var requestedParentTask = _repository.GetTaskById(parentId);
+            _sut.IncreasePriority(closed2Id);
+            var requestedParentTask = _sut.GetTaskById(parentId);
 
             Assert.AreEqual(3, requestedParentTask.SubTasks.Count);
             Assert.AreEqual(closedTask1, requestedParentTask.SubTasks[0]);
@@ -420,12 +418,12 @@ namespace KaVE.Tasks.Test.Repository
             };
             closedTask2.Close();
 
-            var closed1Id = _repository.AddTask(closedTask1);
-            _repository.AddTask(openTask);
-            _repository.AddTask(closedTask2);
+            var closed1Id = _sut.AddTask(closedTask1);
+            _sut.AddTask(openTask);
+            _sut.AddTask(closedTask2);
 
-            _repository.DecreasePriority(closed1Id);
-            var rootTask = _repository.GetTaskById(TaskRepository.RootTaskId);
+            _sut.DecreasePriority(closed1Id);
+            var rootTask = _sut.GetTaskById(TaskRepository.RootTaskId);
 
             Assert.AreEqual(3, rootTask.SubTasks.Count);
             Assert.AreEqual(openTask, rootTask.SubTasks[0]);
@@ -454,12 +452,12 @@ namespace KaVE.Tasks.Test.Repository
             };
             closedTask2.Close();
 
-            _repository.AddTask(closedTask1);
-            _repository.AddTask(openTask);
-            var closed2Id = _repository.AddTask(closedTask2);
+            _sut.AddTask(closedTask1);
+            _sut.AddTask(openTask);
+            var closed2Id = _sut.AddTask(closedTask2);
 
-            _repository.IncreasePriority(closed2Id);
-            var rootTask = _repository.GetTaskById(TaskRepository.RootTaskId);
+            _sut.IncreasePriority(closed2Id);
+            var rootTask = _sut.GetTaskById(TaskRepository.RootTaskId);
 
             Assert.AreEqual(3, rootTask.SubTasks.Count);
             Assert.AreEqual(closedTask2, rootTask.SubTasks[0]);
@@ -475,14 +473,15 @@ namespace KaVE.Tasks.Test.Repository
                 Title = "Title"
             };
 
-            var id = _repository.AddTask(openTask);
+            var id = _sut.AddTask(openTask);
 
-            var externalRepo = new TaskRepository(Path.Combine(TestDirectory, FileBase + _counter.ToString()), false);
+            Thread.Sleep(200);
+            var externalRepo = new TaskRepository(_fileRepo);
             var retrievedTask = externalRepo.GetTaskById(id);
             retrievedTask.Title = "Title2";
             externalRepo.UpdateTask(retrievedTask.Id, retrievedTask);
-            Thread.Sleep(100);
-            var originalTask = _repository.GetTaskById(retrievedTask.Id);
+            Thread.Sleep(200);
+            var originalTask = _sut.GetTaskById(retrievedTask.Id);
 
             Assert.AreEqual(retrievedTask, originalTask);
         }

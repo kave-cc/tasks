@@ -65,24 +65,21 @@ namespace KaVE.Tasks.Repository
         private readonly ManualResetEvent _resetEvent;
         private readonly List<int> _versionHashs = new List<int>();
 
+
         private Task _rootTask;
 
-        public TaskRepository(bool async = true) : this(GetDefaultFileLocation(), async)
-        {
-        }
-
-        public TaskRepository(string fileUri, bool async = true)
+        public TaskRepository(string fileUri)
         {
             _fileUri = fileUri;
             var fileInfo = new FileInfo(_fileUri);
 
             _resetEvent = new ManualResetEvent(false);
 
-            _watcher = new FileChangeWatcher(fileInfo.FullName);
-            _watcher.FileChanged += OnFileChanged;
-
             SetJsonConvertSettings();
             InitRootTask();
+
+            _watcher = new FileChangeWatcher(fileInfo.FullName);
+            _watcher.FileChanged += OnFileChanged;
         }
 
         public DateTimeOffset LastUpdate
@@ -246,39 +243,47 @@ namespace KaVE.Tasks.Repository
         {
             var fileInfo = new FileInfo(_fileUri);
             if (!args.Success || !args.FileInfo.FullName.Equals(fileInfo.FullName)) return;
-            
+
             InitRootTask();
-            OnRootTaskChanged(this, null);
+            RootTaskChange();
             _resetEvent.Set();
         }
 
         private void InitRootTask()
         {
-            if (File.Exists(_fileUri))
+            if (RepositoryExists())
             {
-                var json = File.ReadAllText(_fileUri);
-                try
-                {
-                    if (IsExternalChange(json.GetHashCode()))
-                    {
-                        _rootTask = json.ParseJsonTo<Task>();
-                        OnRootTaskChanged(this, null);
-                        LastUpdate = DateTimeOffset.Now;
-                    }
-                }
-                catch (JsonSerializationException e)
-                {
-                    _rootTask = null;
-                }
+                ReadRepositoryContents();
             }
-            if (_rootTask == null)
+            else
             {
-                _rootTask = new Task
-                {
-                    Id = RootTaskId,
-                    Title = "RootTask"
-                };
-                OnRootTaskChanged(this, null);
+                CreateNewRepository();
+            }
+        }
+
+        private bool RepositoryExists()
+        {
+            var repositoryExists = File.Exists(_fileUri);
+            return repositoryExists;
+        }
+
+        private void CreateNewRepository()
+        {
+            _rootTask = new Task
+            {
+                Id = RootTaskId,
+                Title = "RootTask"
+            };
+            Persist();
+        }
+
+        private void ReadRepositoryContents()
+        {
+            var json = File.ReadAllText(_fileUri);
+            if (IsExternalChange(json.GetHashCode()))
+            {
+                _rootTask = json.ParseJsonTo<Task>();
+                RootTaskChange();
                 LastUpdate = DateTimeOffset.Now;
             }
         }
@@ -289,11 +294,6 @@ namespace KaVE.Tasks.Repository
 
             _versionHashs.Remove(hash);
             return false;
-        }
-
-        private void OnRootTaskChanged(object sender, PropertyChangedEventArgs e)
-        {
-            OnPropertyChanged(nameof(_rootTask));
         }
 
         private static void SetJsonConvertSettings()
@@ -363,11 +363,22 @@ namespace KaVE.Tasks.Repository
 
         private void Persist()
         {
-            OnRootTaskChanged(this, null);
+            var dir = Path.GetDirectoryName(_fileUri);
+            if (dir != null && !Directory.Exists(dir))
+            {
+                Directory.CreateDirectory(dir);
+            }
+            RootTaskChange();
             var json = _rootTask.ToCompactJson();
             _versionHashs.Add(json.GetHashCode());
             _lastWriteTime = DateTime.UtcNow;
             RetryingFileWriter.WriteAllText(_fileUri, json);
+        }
+
+
+        private void RootTaskChange()
+        {
+            OnPropertyChanged(nameof(_rootTask));
         }
 
         [NotifyPropertyChangedInvocator]
