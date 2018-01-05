@@ -24,6 +24,7 @@ using Appccelerate.StateMachine;
 using JetBrains.Annotations;
 using JetBrains.Util;
 using KaVE.Commons.Model.Events.Enums;
+using KaVE.Commons.Utils;
 using KaVE.Tasks.Util;
 using Newtonsoft.Json;
 
@@ -276,6 +277,11 @@ namespace KaVE.Tasks.Model
             hashCode = hashCode * -1521134295 + _urgency.GetHashCode();
             hashCode = hashCode * -1521134295 + _annoyance.GetHashCode();
             return hashCode;
+        }
+
+        public override string ToString()
+        {
+            return this.ToStringReflection();
         }
     }
 }
