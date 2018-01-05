@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace KaVE.Tasks.Util.FileUtil
         {
             FileStream stream = null;
 
+            Log("IsFileLocked (start)");
             try
             {
                 stream = file.Open(FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
@@ -46,24 +48,39 @@ namespace KaVE.Tasks.Util.FileUtil
             finally
             {
                 stream?.Close();
+                Log("IsFileLocked (close)");
             }
 
             return false;
         }
 
+        public static void Log(string msg, params object[] args)
+        {
+            var formattedMsg = args.Length > 0 ? string.Format(msg, args) : msg;
+            var now = DateTime.Now;
+            Console.WriteLine("{0}.{1}.{2} " + formattedMsg, now.Minute, now.Second, now.Millisecond);
+        }
+
         public bool WaitForFileUnlock(int maxMillis)
         {
             var cancelTokenSource = new CancellationTokenSource();
+            var sleepCancelTokenSource = new CancellationTokenSource();
             var cancelToken = cancelTokenSource.Token;
 
-            var readTask = Task.Run(() => TryReadFile(cancelToken));
-            var sleepTask = Task.Run(() =>
-            {
-                Thread.Sleep(maxMillis);
-                cancelTokenSource.Cancel();
+            var readTask = Task.Run(() => {
+                TryReadFile(cancelToken);
+                Log("WaitForFileUnlock (try read done)");
             });
 
-            return Task.WaitAny(readTask, sleepTask) == 0;
+            var sleepTask = Task.Delay(maxMillis, sleepCancelTokenSource.Token);
+
+            var res = Task.WaitAny(readTask, sleepTask);
+
+            cancelTokenSource.Cancel();
+            sleepCancelTokenSource.Cancel();
+
+            Log("WaitForFileUnlock (out)");
+            return res == 0;
         }
 
         private void TryReadFile(CancellationToken token)
@@ -71,8 +88,12 @@ namespace KaVE.Tasks.Util.FileUtil
             token.ThrowIfCancellationRequested();
 
             var fileInfo = new FileInfo(_fileUri);
+            var counter = 0;
             while (IsFileLocked(fileInfo) && !token.IsCancellationRequested)
+            {
+                Console.WriteLine(counter++);
                 Thread.Sleep(100);
+            }
         }
     }
 }

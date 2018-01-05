@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using KaVE.Tasks.Util.FileUtil;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.Util.FileUtil
+namespace KaVE.Tasks.Tests.Util.FileUtil
 {
     [TestFixture]
     internal class FileChangeWatcherTest
@@ -32,17 +32,24 @@ namespace KaVE.Tasks.Test.Util.FileUtil
 
             CreateTestFile(_currentDirectory);
 
-            _watcher?.Dispose();
-            _watcher = new FileChangeWatcher(_filePath);
-            _watcher.FileChanged += FileChanged;
-
             _args = null;
             _signal = new SemaphoreSlim(0, 1);
+
+            _watcher = new FileChangeWatcher(_filePath);
+            _watcher.FileChanged += (sender, args) =>
+            {
+                if (args.FileInfo.FullName == _currentFileInfo.FullName)
+                {
+                    _args = args;
+                    _signal.Release();
+                }
+            };
         }
 
         [TearDown]
         public void TearDown()
         {
+            _watcher?.Dispose();
             Directory.Delete(_currentDirectory, true);
         }
 
@@ -71,21 +78,17 @@ namespace KaVE.Tasks.Test.Util.FileUtil
             Directory.Delete(TestDirectory, true);
         }
 
-        private void FileChanged(object sender, FileChangedEventArgs args)
+        private void WriteDummyText(int delayInMS)
         {
-            if (args.FileInfo.FullName == _currentFileInfo.FullName)
+            Task.Run(() =>
             {
-                _args = args;
-                _signal.Release();
-            }
-        }
-
-        private void WriteDummyText()
-        {
-            _writer = File.AppendText(_filePath);
-            _writer.WriteLine("Test");
-            _writer.Close();
-            _currentFileInfo = new FileInfo(_filePath);
+                FileUtils.Log("WDT(start)");
+                using (var s = File.OpenWrite(_filePath))
+                {
+                    Thread.Sleep(delayInMS);
+                }
+                FileUtils.Log("WDT(end)");
+            });
         }
 
         private void CreateTestFile(string directory)
@@ -98,28 +101,26 @@ namespace KaVE.Tasks.Test.Util.FileUtil
         [Test]
         public async void WhenFileHasChanged_FiresChangeEvent()
         {
-            WriteDummyText();
+            WriteDummyText(0);
 
-            await Task.WhenAny(_signal.WaitAsync());
+            Thread.Sleep(100);
 
             Assert.NotNull(_args);
-            Assert.IsTrue(_args.Success);
+            Assert.IsTrue(_args.LockWasFreed);
             Assert.AreEqual(_currentFileInfo.FullName, _args.FileInfo.FullName);
         }
 
         [Test]
         public async void WhenFileHasChangedAndIsLocked_ReturnsFalseAfterSomeTime()
         {
-            WriteDummyText();
-            var s2 = new FileStream(_filePath, FileMode.Open, FileAccess.Read, FileShare.None);
-
-            await _signal.WaitAsync(2000);
-
-            s2.Close();
-
+            WriteDummyText(6000);
+            Thread.Sleep(3000);
+            FileUtils.Log("After sleep");
             Assert.NotNull(_args);
-            Assert.IsFalse(_args.Success);
+            Assert.IsFalse(_args.LockWasFreed);
             Assert.AreEqual(_currentFileInfo.FullName, _args.FileInfo.FullName);
+            Thread.Sleep(3000);
+
         }
     }
 }

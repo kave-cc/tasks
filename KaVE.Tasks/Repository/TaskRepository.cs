@@ -234,15 +234,10 @@ namespace KaVE.Tasks.Repository
             UpdateTask(taskId, task);
         }
 
-        private static string GetDefaultFileLocation()
-        {
-            return Path.Combine(PersistenceConstants.AppFolder, DefaultFile);
-        }
-
         private void OnFileChanged(object sender, FileChangedEventArgs args)
         {
             var fileInfo = new FileInfo(_fileUri);
-            if (!args.Success || !args.FileInfo.FullName.Equals(fileInfo.FullName)) return;
+            if (!args.LockWasFreed || !args.FileInfo.FullName.Equals(fileInfo.FullName)) return;
 
             InitRootTask();
             RootTaskChange();
@@ -372,7 +367,7 @@ namespace KaVE.Tasks.Repository
             var json = _rootTask.ToCompactJson();
             _versionHashs.Add(json.GetHashCode());
             _lastWriteTime = DateTime.UtcNow;
-            RetryingFileWriter.WriteAllText(_fileUri, json);
+            WaitingFileWriter.WriteAllText(_fileUri, json);
         }
 
 

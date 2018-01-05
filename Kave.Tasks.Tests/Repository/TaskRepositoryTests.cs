@@ -197,11 +197,11 @@ namespace KaVE.Tasks.Tests.Repository
             };
 
             var parentId = _sut.AddTask(task);
-            Thread.Sleep(1000);
+            //Thread.Sleep(100);
             var childId = _sut.AddSubTask(subTask, parentId);
-            Thread.Sleep(1000);
+            //Thread.Sleep(100);
             var retrievedTask = _sut.GetTaskById(parentId);
-            Thread.Sleep(1000);
+            //Thread.Sleep(100);
             var retrievedSubTask = _sut.GetTaskById(childId);
 
             Assert.IsTrue(retrievedTask.SubTasks.Contains(subTask));

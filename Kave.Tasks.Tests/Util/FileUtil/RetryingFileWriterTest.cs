@@ -65,7 +65,7 @@ namespace KaVE.Tasks.Test.Util.FileUtil
 
 
             Parallel.Invoke(
-                () => RetryingFileWriter.WriteAllText(_currentFile, text, 2000),
+                () => WaitingFileWriter.WriteAllText(_currentFile, text, 2000),
                 () =>
                 {
                     Thread.Sleep(100);
@@ -82,7 +82,7 @@ namespace KaVE.Tasks.Test.Util.FileUtil
             _stream = File.Create(_currentFile);
             var text = "SampleText";
 
-            RetryingFileWriter.WriteAllText(_currentFile, text, 1);
+            WaitingFileWriter.WriteAllText(_currentFile, text, 1);
         }
     }
 }

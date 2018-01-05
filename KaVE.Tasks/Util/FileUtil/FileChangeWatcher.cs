@@ -16,7 +16,7 @@
 
 using System;
 using System.IO;
-using System.Threading.Tasks;
+using System.Threading;
 
 #pragma warning disable 4014
 
@@ -38,10 +38,14 @@ namespace KaVE.Tasks.Util.FileUtil
             _fileInfo = new FileInfo(fileUri);
             var directory = _fileInfo.DirectoryName;
 
-            _watcher = new FileSystemWatcher(directory);
+            _watcher = new FileSystemWatcher(directory)
+            {
+                NotifyFilter = NotifyFilters.LastWrite,
+                Filter = "*.json",
+                IncludeSubdirectories = false
+            };
             _watcher.Changed += WatchFileChanged;
             _watcher.Deleted += WatchFileDeleted;
-            _watcher.NotifyFilter = NotifyFilters.LastWrite;
             _watcher.EnableRaisingEvents = true;
         }
 
@@ -61,15 +65,14 @@ namespace KaVE.Tasks.Util.FileUtil
         private void WatchFileChanged(object sender, FileSystemEventArgs e)
         {
             if (e.FullPath != _fileInfo.FullName) return;
-
-            var fileInfo = new FileInfo(e.FullPath);
             CheckFileLock(InitialDelay);
         }
 
-        private async Task CheckFileLock(int delay)
+        private void CheckFileLock(int delay)
         {
             while (true)
             {
+                FileUtils.Log("CheckFileLock");
                 if (FileUtils.IsFileLocked(_fileInfo))
                 {
                     if (delay > MaxDelay)
@@ -79,7 +82,8 @@ namespace KaVE.Tasks.Util.FileUtil
                         break;
                     }
 
-                    await Task.Delay(delay);
+                    FileUtils.Log("CheckFileLock delay: {0}", delay);
+                    Thread.Sleep(delay);
                     delay = delay * 2;
                     continue;
                 }
@@ -103,12 +107,12 @@ namespace KaVE.Tasks.Util.FileUtil
     public class FileChangedEventArgs
     {
         public FileInfo FileInfo;
-        public bool Success;
+        public bool LockWasFreed;
 
-        public FileChangedEventArgs(FileInfo fileInfo, bool success)
+        public FileChangedEventArgs(FileInfo fileInfo, bool lockWasFreed)
         {
             FileInfo = fileInfo;
-            Success = success;
+            LockWasFreed = lockWasFreed;
         }
     }
 }
