@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package>
+
+    <metadata>
+        <id>KaVE.Tasks</id>
+        <version>$version$</version>
+        <title>KaVE Tasks</title>
+
+        <description>Light-weight task manager that is integrated into the KaVE project to allow research on interaction data.</description>
+        <authors>Nico Strebel</authors>
+        <owners>KaVE Team</owners>
+        <copyright>Copyright 2017-2018</copyright>
+
+        <projectUrl>http://kave.cc/</projectUrl>
+        <iconUrl>https://raw.githubusercontent.com/kave-cc/resources/master/images/logo-tasks.png</iconUrl>
+        <licenseUrl>https://github.com/kave-cc/resources/blob/master/LICENSE</licenseUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+
+        <dependencies>
+            <dependency id="Wave" version="[8.0]" />
+            <dependency id="KaVE.Project" version="[0.1017.0]" />
+        </dependencies>
+
+    </metadata>
+
+    <files>
+        <file src="../KaVE.Tasks/bin/Debug/KaVE.Tasks.dll" target="DotFiles" />
+    </files>
+</package>
