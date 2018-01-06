@@ -17,6 +17,7 @@
 using System;
 using System.IO;
 using System.Threading;
+using KaVE.Commons.Utils;
 
 #pragma warning disable 4014
 
@@ -27,23 +28,28 @@ namespace KaVE.Tasks.Util.FileUtil
         public delegate void FileChangedHandler(object sender, FileChangedEventArgs args);
 
         private const int InitialDelay = 10;
-        private const int MaxDelay = 1000;
+        private readonly int _timeout;
         private readonly FileInfo _fileInfo;
-
         private readonly FileSystemWatcher _watcher;
         private DateTime _lastUpdate;
 
-        public FileChangeWatcher(string fileUri)
+        public FileChangeWatcher(string fileUri, int timeout = 1000)
         {
+            _timeout = timeout;
+
             _fileInfo = new FileInfo(fileUri);
             var directory = _fileInfo.DirectoryName;
+
+            if (!File.Exists(fileUri))
+                throw new ArgumentException("The file does not exist!");
 
             _watcher = new FileSystemWatcher(directory)
             {
                 NotifyFilter = NotifyFilters.LastWrite,
-                Filter = "*.json",
+                Filter = _fileInfo.Name,
                 IncludeSubdirectories = false
             };
+
             _watcher.Changed += WatchFileChanged;
             _watcher.Deleted += WatchFileDeleted;
             _watcher.EnableRaisingEvents = true;
@@ -64,43 +70,45 @@ namespace KaVE.Tasks.Util.FileUtil
 
         private void WatchFileChanged(object sender, FileSystemEventArgs e)
         {
-            if (e.FullPath != _fileInfo.FullName) return;
             CheckFileLock(InitialDelay);
         }
 
         private void CheckFileLock(int delay)
         {
-            while (true)
+            var fileWasUnlocked = false;
+            int delaySum = 0;
+
+            while (delaySum < _timeout)
             {
                 FileUtils.Log("CheckFileLock");
                 if (FileUtils.IsFileLocked(_fileInfo))
                 {
-                    if (delay > MaxDelay)
-                    {
-                        var args = new FileChangedEventArgs(_fileInfo, false);
-                        OnFileChanged(args);
-                        break;
-                    }
-
                     FileUtils.Log("CheckFileLock delay: {0}", delay);
                     Thread.Sleep(delay);
                     delay = delay * 2;
-                    continue;
+                    delaySum += delay;
                 }
-                var arg = new FileChangedEventArgs(_fileInfo, true);
-                OnFileChanged(arg);
-                break;
+                else
+                {
+                    fileWasUnlocked = true;
+                    break;
+                }
             }
+
+
+            var args = new FileChangedEventArgs(_fileInfo, fileWasUnlocked);
+            OnFileChanged(args);
         }
 
         protected virtual void OnFileChanged(FileChangedEventArgs args)
         {
+            Console.WriteLine(args.ToStringReflection());
+
             args.FileInfo.Refresh();
-            if (args.FileInfo.LastWriteTimeUtc > _lastUpdate)
-            {
-                _lastUpdate = args.FileInfo.LastWriteTimeUtc;
-                FileChanged?.Invoke(this, args);
-            }
+            if (args.FileInfo.LastWriteTimeUtc <= _lastUpdate) return;
+
+            _lastUpdate = args.FileInfo.LastWriteTimeUtc;
+            FileChanged?.Invoke(this, args);
         }
     }
 

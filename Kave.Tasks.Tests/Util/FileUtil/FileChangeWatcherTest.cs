@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,105 +23,93 @@ using NUnit.Framework;
 
 namespace KaVE.Tasks.Tests.Util.FileUtil
 {
-    [TestFixture]
     internal class FileChangeWatcherTest
     {
+        private FileChangeWatcher _sut;
+        private const string FileName = "test.txt";
+        private string _fileUri;
+        private string _dir;
+        private FileChangedEventArgs _args;
+        private SemaphoreSlim _signal;
+        private const int Timeout = 200;
+        private ManualResetEventSlim _resetEvent; 
+
         [SetUp]
         public void SetUp()
         {
-            _currentDirectory = Path.Combine(TestDirectory, _counter++.ToString());
+            _resetEvent = new ManualResetEventSlim();
 
-            CreateTestFile(_currentDirectory);
+            _dir = Path.GetRandomFileName();
+            Directory.CreateDirectory(_dir);
 
-            _args = null;
+            _fileUri = Path.Combine(_dir, FileName);
+            File.Create(_fileUri).Close();
+
+            _sut = new FileChangeWatcher(_fileUri, Timeout);
+            _sut.FileChanged += FileChanged;
             _signal = new SemaphoreSlim(0, 1);
 
-            _watcher = new FileChangeWatcher(_filePath);
-            _watcher.FileChanged += (sender, args) =>
-            {
-                if (args.FileInfo.FullName == _currentFileInfo.FullName)
-                {
-                    _args = args;
-                    _signal.Release();
-                }
-            };
+            _args = null;
         }
 
         [TearDown]
         public void TearDown()
         {
-            _watcher?.Dispose();
-            Directory.Delete(_currentDirectory, true);
+            _sut.Dispose();
+            Directory.Delete(_dir, true);
         }
 
-        private FileChangeWatcher _watcher;
-        private const string TestDirectory = "fcwtTest";
-        private const string TestFile = "test.txt";
-        private FileInfo _currentFileInfo;
-        private int _counter;
-        private string _filePath;
-        private string _currentDirectory;
-        private StreamWriter _writer;
-        private FileChangedEventArgs _args;
-        private SemaphoreSlim _signal;
-
-        [TestFixtureSetUp]
-        public void TestFixtureSetUp()
+        private void FileChanged(object sender, FileChangedEventArgs args)
         {
-            Directory.CreateDirectory(TestDirectory);
-        }
-
-        [TestFixtureTearDown]
-        public void FixtureTearDown()
-        {
-            _watcher?.Dispose();
-            _writer?.Dispose();
-            Directory.Delete(TestDirectory, true);
-        }
-
-        private void WriteDummyText(int delayInMS)
-        {
-            Task.Run(() =>
-            {
-                FileUtils.Log("WDT(start)");
-                using (var s = File.OpenWrite(_filePath))
-                {
-                    Thread.Sleep(delayInMS);
-                }
-                FileUtils.Log("WDT(end)");
-            });
-        }
-
-        private void CreateTestFile(string directory)
-        {
-            _filePath = Path.Combine(directory, TestFile);
-            Directory.CreateDirectory(directory);
-            File.Create(_filePath).Close();
+            _args = args;
+            _resetEvent.Set();
         }
 
         [Test]
-        public async void WhenFileHasChanged_FiresChangeEvent()
+        [ExpectedException(typeof(ArgumentException))]
+        public void whenDirectoryDoesNotExist_throws()
         {
-            WriteDummyText(0);
+            _sut = new FileChangeWatcher(Path.GetRandomFileName());
+        }
 
-            Thread.Sleep(100);
+        [Test]
+        public void whenOtherFileInSameDirectoryIsChanged_doesNotNotify()
+        {
+            var directory = Path.GetDirectoryName(_fileUri);
+            var randomFile = Path.Combine(directory, Path.GetRandomFileName());
+
+            File.WriteAllText(randomFile, @"test");
+
+            _signal.Wait(Timeout * 2);
+
+            Assert.Null(_args);
+        }
+
+        [Test]
+        public void whenFileIsChangedAndLocked_lockWasFreedIsTrue()
+        {
+            File.WriteAllText(_fileUri, @"test");
+
+            Thread.Sleep(Timeout * 2);
+            _resetEvent.Wait(Timeout * 2);
 
             Assert.NotNull(_args);
             Assert.IsTrue(_args.LockWasFreed);
-            Assert.AreEqual(_currentFileInfo.FullName, _args.FileInfo.FullName);
         }
 
         [Test]
-        public async void WhenFileHasChangedAndIsLocked_ReturnsFalseAfterSomeTime()
+        public void whenFileIsChangedAndLocked_lockWasFreedIsFalse()
         {
-            WriteDummyText(6000);
-            Thread.Sleep(3000);
-            FileUtils.Log("After sleep");
+            File.WriteAllText(_fileUri, @"test");
+            var stream = File.Open(_fileUri, FileMode.Open, FileAccess.Write, FileShare.None);
+
+            _signal.Wait(Timeout * 2);
+
             Assert.NotNull(_args);
             Assert.IsFalse(_args.LockWasFreed);
-            Assert.AreEqual(_currentFileInfo.FullName, _args.FileInfo.FullName);
-            Thread.Sleep(3000);
 
+            stream.Close();
         }
+
     }
 }
