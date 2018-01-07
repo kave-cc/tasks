@@ -18,6 +18,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using KaVE.Commons.Utils;
 using KaVE.Tasks.Util.FileUtil;
 using NUnit.Framework;
 
@@ -86,7 +87,7 @@ namespace KaVE.Tasks.Tests.Util.FileUtil
         }
 
         [Test]
-        public void whenFileIsChangedAndLocked_lockWasFreedIsTrue()
+        public void whenFileIsChangedAndUnLocked_lockWasFreedIsTrue()
         {
             File.WriteAllText(_fileUri, @"test");
 
@@ -100,8 +101,12 @@ namespace KaVE.Tasks.Tests.Util.FileUtil
         [Test]
         public void whenFileIsChangedAndLocked_lockWasFreedIsFalse()
         {
-            File.WriteAllText(_fileUri, @"test");
             var stream = File.Open(_fileUri, FileMode.Open, FileAccess.Write, FileShare.None);
+            stream.WriteByte(1);
+            
+            stream.Close();
+            stream = File.Open(_fileUri, FileMode.Open, FileAccess.Write, FileShare.None);
+
 
             _signal.Wait(Timeout * 2);
 
