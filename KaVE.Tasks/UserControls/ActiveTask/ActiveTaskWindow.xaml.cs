@@ -28,7 +28,7 @@ namespace KaVE.Tasks.UserControls.ActiveTask
     /// <summary>
     ///     Interaction logic for ActiveTaskWindow.xaml
     /// </summary>
-    public partial class ActiveTaskWindow
+    public partial class ActiveTaskWindow : IDisposable
     {
         private readonly Timer _timer;
         private readonly TaskViewModel _viewModel;
@@ -98,6 +98,11 @@ namespace KaVE.Tasks.UserControls.ActiveTask
         private void Close_Click(object sender, RoutedEventArgs e)
         {
             _viewModel.CompleteTask(_viewModel.ActiveTask);
+        }
+
+        public void Dispose()
+        {
+            _timer?.Dispose();
         }
     }
 
