@@ -57,7 +57,6 @@ namespace KaVE.Tasks.Tests.Util.FileUtil
                 () =>
                 {
                     Thread.Sleep(50);
-                    FileUtils.Log("SleepOver");
                     _stream.Close();
                 },
                 () => WaitingFileWriter.WriteAllText(_currentFile, text, 3000));

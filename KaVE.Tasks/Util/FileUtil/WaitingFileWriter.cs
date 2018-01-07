@@ -21,29 +21,23 @@ namespace KaVE.Tasks.Util.FileUtil
 {
     public class WaitingFileWriter
     {
-       // private static readonly object Semaphore = new object();
 
         public static DateTime WriteAllText(string fileUri, string json, int maxDelay = 2000)
         {
-            FileUtils.Log("WaitingFileWriter.WriteAllText (before)");
-          //  lock (Semaphore)
-           // {
-                FileUtils.Log("WaitingFileWriter.WriteAllText");
-                var utils = new FileUtils(fileUri);
+            var utils = new FileUtils(fileUri);
 
-                if (!utils.WaitForFileUnlock(maxDelay))
-                    throw new Exception("The file could not be written in time.");
+            if (!utils.WaitForFileUnlock(maxDelay))
+                throw new Exception("The file could not be written in time.");
 
-                try
-                {
-                    File.WriteAllText(fileUri, json);
-                    return new FileInfo(fileUri).LastWriteTimeUtc;
-                }
-                catch (IOException)
-                {
-                }
-                return DateTime.MinValue;
-          //  }
+            try
+            {
+                File.WriteAllText(fileUri, json);
+                return new FileInfo(fileUri).LastWriteTimeUtc;
+            }
+            catch (IOException)
+            {
+            }
+            return DateTime.MinValue;
         }
     }
 }

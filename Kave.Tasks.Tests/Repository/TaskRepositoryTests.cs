@@ -36,16 +36,14 @@ namespace KaVE.Tasks.Tests.Repository
         {
             _dirRepo = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             _fileRepo = Path.Combine(_dirRepo, "repo.json");
-            Console.WriteLine("Working with repository {0}", _fileRepo);
+
             _sut = new TaskRepository(_fileRepo);
         }
 
         [TearDown]
         public void Cleanup()
         {
-            FileUtils.Log("TD");
             _sut.Dispose();
-            FileUtils.Log("DT");
             if (Directory.Exists(_dirRepo))
             {
                 try
@@ -462,8 +460,11 @@ namespace KaVE.Tasks.Tests.Repository
             closedTask2.Close();
 
             _sut.AddTask(closedTask1);
+            Thread.Sleep(10);
             _sut.AddTask(openTask);
+            Thread.Sleep(10);
             var closed2Id = _sut.AddTask(closedTask2);
+            Thread.Sleep(10);
 
             _sut.IncreasePriority(closed2Id);
             var rootTask = _sut.GetTaskById(TaskRepository.RootTaskId);

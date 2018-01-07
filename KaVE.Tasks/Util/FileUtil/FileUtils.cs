@@ -35,8 +35,7 @@ namespace KaVE.Tasks.Util.FileUtil
         public static bool IsFileLocked(FileInfo file)
         {
             FileStream stream = null;
-
-            Log("IsFileLocked (start)");
+            
             try
             {
                 stream = file.Open(FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
@@ -48,17 +47,9 @@ namespace KaVE.Tasks.Util.FileUtil
             finally
             {
                 stream?.Close();
-                Log("IsFileLocked (close)");
             }
 
             return false;
-        }
-
-        public static void Log(string msg, params object[] args)
-        {
-            var formattedMsg = args.Length > 0 ? string.Format(msg, args) : msg;
-            var now = DateTime.Now;
-            Console.WriteLine("{0}.{1}.{2} " + formattedMsg, now.Minute, now.Second, now.Millisecond);
         }
 
         public bool WaitForFileUnlock(int maxMillis)
@@ -68,35 +59,28 @@ namespace KaVE.Tasks.Util.FileUtil
             var cancelToken = cancelTokenSource.Token;
 
             var readTask = Task.Run(() => {
-                Log("WaitForFileUnlock (in)");
                 TryReadFile();
-                Log("WaitForFileUnlock (try read done)");
             }, cancelToken);
 
             var sleepTask = Task.Delay(maxMillis, sleepCancelTokenSource.Token);
 
             var res = Task.WaitAny(readTask, sleepTask);
-            Log("Go on");
 
             cancelTokenSource.Cancel();
             sleepCancelTokenSource.Cancel();
-
-            Log("WaitForFileUnlock (out)" + res);
+            
             return res == 0;
         }
 
         private void TryReadFile()
         {
-            Log("TRFF");
             var fileInfo = new FileInfo(_fileUri);
             var counter = 0;
             while (IsFileLocked(fileInfo))
             {
-                Log("LOCKED");
                 Console.WriteLine(counter++);
                 Thread.Sleep(50);
             }
-            Log("UNLOCKED");
         }
     }
 }

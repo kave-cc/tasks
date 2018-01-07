@@ -81,10 +81,8 @@ namespace KaVE.Tasks.Util.FileUtil
 
             while (delaySum < _timeout)
             {
-                FileUtils.Log("CheckFileLock");
                 if (FileUtils.IsFileLocked(_fileInfo))
                 {
-                    FileUtils.Log("CheckFileLock delay: {0}", delay);
                     Thread.Sleep(delay);
                     delay = delay * 2;
                     delaySum += delay;
