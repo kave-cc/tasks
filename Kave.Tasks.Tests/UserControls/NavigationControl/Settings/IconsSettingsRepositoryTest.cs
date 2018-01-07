@@ -13,11 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 using System.IO;
 using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.UserControls.NavigationControl.Settings
+namespace KaVE.Tasks.Tests.UserControls.NavigationControl.Settings
 {
     [TestFixture]
     public class IconsSettingsRepositoryTest

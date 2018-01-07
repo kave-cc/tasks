@@ -19,6 +19,7 @@ using System.IO;
 using System.Threading;
 using KaVE.Tasks.Model;
 using KaVE.Tasks.Repository;
+using KaVE.Tasks.Util.FileUtil;
 using NUnit.Framework;
 
 namespace KaVE.Tasks.Tests.Repository
@@ -42,7 +43,9 @@ namespace KaVE.Tasks.Tests.Repository
         [TearDown]
         public void Cleanup()
         {
+            FileUtils.Log("TD");
             _sut.Dispose();
+            FileUtils.Log("DT");
             if (Directory.Exists(_dirRepo))
             {
                 try
@@ -197,11 +200,8 @@ namespace KaVE.Tasks.Tests.Repository
             };
 
             var parentId = _sut.AddTask(task);
-            //Thread.Sleep(100);
             var childId = _sut.AddSubTask(subTask, parentId);
-            //Thread.Sleep(100);
             var retrievedTask = _sut.GetTaskById(parentId);
-            //Thread.Sleep(100);
             var retrievedSubTask = _sut.GetTaskById(childId);
 
             Assert.IsTrue(retrievedTask.SubTasks.Contains(subTask));
@@ -342,13 +342,19 @@ namespace KaVE.Tasks.Tests.Repository
             {
                 Title = "Title"
             };
+            parent.SubTasks.Add(closedTask1);
+            closedTask1.Parent = parent;
+
+            parent.SubTasks.Add(openTask);
+            openTask.Parent = parent;
+
+            parent.SubTasks.Add(closedTask2);
+            closedTask2.Parent = parent;
+
 
             var parentId = _sut.AddTask(parent);
-            var idClosed1 = _sut.AddSubTask(closedTask1, parentId);
-            _sut.AddSubTask(openTask, parentId);
-            _sut.AddSubTask(closedTask2, parentId);
 
-            _sut.DecreasePriority(idClosed1);
+            _sut.DecreasePriority(closedTask1.Id);
             var fetchedParentTask = _sut.GetTaskById(parentId);
 
             Assert.AreEqual(3, fetchedParentTask.SubTasks.Count);
@@ -382,13 +388,13 @@ namespace KaVE.Tasks.Tests.Repository
             {
                 Title = "Title"
             };
+            parentTask.AddSubTask(closedTask1);
+            parentTask.AddSubTask(openTask);
+            parentTask.AddSubTask(closedTask2);
 
             var parentId = _sut.AddTask(parentTask);
-            _sut.AddSubTask(closedTask1, parentId);
-            _sut.AddSubTask(openTask, parentId);
-            var closed2Id = _sut.AddSubTask(closedTask2, parentId);
 
-            _sut.IncreasePriority(closed2Id);
+            _sut.IncreasePriority(closedTask2.Id);
             var requestedParentTask = _sut.GetTaskById(parentId);
 
             Assert.AreEqual(3, requestedParentTask.SubTasks.Count);
@@ -419,12 +425,15 @@ namespace KaVE.Tasks.Tests.Repository
             closedTask2.Close();
 
             var closed1Id = _sut.AddTask(closedTask1);
+            Thread.Sleep(10);
             _sut.AddTask(openTask);
+            Thread.Sleep(10);
             _sut.AddTask(closedTask2);
+            Thread.Sleep(10);
 
             _sut.DecreasePriority(closed1Id);
             var rootTask = _sut.GetTaskById(TaskRepository.RootTaskId);
-
+            
             Assert.AreEqual(3, rootTask.SubTasks.Count);
             Assert.AreEqual(openTask, rootTask.SubTasks[0]);
             Assert.AreEqual(closedTask2, rootTask.SubTasks[1]);

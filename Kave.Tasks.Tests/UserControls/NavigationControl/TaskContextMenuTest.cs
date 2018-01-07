@@ -15,12 +15,10 @@
  */
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using JetBrains.DataFlow;
-using JetBrains.ReSharper.PsiGen.Util;
 using KaVE.Tasks.Model;
 using KaVE.Tasks.Repository;
 using KaVE.Tasks.UserControls;
@@ -29,9 +27,8 @@ using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using Moq;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.UserControls.NavigationControl
+namespace KaVE.Tasks.Tests.UserControls.NavigationControl
 {
-    [TestFixture]
     [RequiresSTA]
     public class TaskContextMenuTest
     {

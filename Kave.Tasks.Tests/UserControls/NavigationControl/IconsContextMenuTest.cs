@@ -13,18 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using JetBrains.DataFlow;
+
 using KaVE.Tasks.UserControls.NavigationControl;
 using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.UserControls.NavigationControl
+namespace KaVE.Tasks.Tests.UserControls.NavigationControl
 {
     [TestFixture, RequiresSTA]
     public class IconsContextMenuTest

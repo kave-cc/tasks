@@ -13,16 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-using System;
-using System.Collections.Generic;
+
 using System.Collections.ObjectModel;
-using System.Configuration.Internal;
 using System.IO;
 using JetBrains.DataFlow;
 using JetBrains.Threading;
 using KaVE.Commons.Model.Events.Tasks;
 using KaVE.Commons.Utils;
-using KaVE.Tasks;
 using KaVE.Tasks.Events;
 using KaVE.Tasks.Model;
 using KaVE.Tasks.Repository;
@@ -33,7 +30,7 @@ using KaVE.VS.Commons.Generators;
 using Moq;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.UserControls
+namespace KaVE.Tasks.Tests.UserControls
 {
     [TestFixture]
     public class TaskViewModelTest

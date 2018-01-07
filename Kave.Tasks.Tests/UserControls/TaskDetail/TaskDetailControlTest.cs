@@ -19,7 +19,7 @@ using KaVE.Tasks.Model;
 using KaVE.Tasks.UserControls.TaskDetail;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.UserControls.TaskDetail
+namespace KaVE.Tasks.Tests.UserControls.TaskDetail
 {
     [TestFixture, RequiresSTA]
     public class TaskDetailControlTest

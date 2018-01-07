@@ -287,7 +287,6 @@
     <Compile Include="Model\IntervalTest.cs" />
     <Compile Include="Model\TaskTest.cs" />
     <Compile Include="UserControls\ActiveTask\ActiveTaskWindowTest.cs" />
-    <Compile Include="UserControls\EditTask\Converter\PrettyDateConverterTest.cs" />
     <Compile Include="UserControls\NavigationControl\IconsContextMenuTest.cs" />
     <Compile Include="UserControls\NavigationControl\Settings\IconsSettingsRepositoryTest.cs" />
     <Compile Include="UserControls\NavigationControl\TaskContextMenuTest.cs" />
@@ -296,7 +295,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserControls\TaskDetail\TaskDetailControlTest.cs" />
     <Compile Include="UserControls\TaskViewModelTest.cs" />
-    <Compile Include="Util\FileUtil\RetryingFileWriterTest.cs" />
+    <Compile Include="Util\FileUtil\WaitingFileWriterTest.cs" />
     <Compile Include="Util\FileUtil\FileChangeWatcherTest.cs" />
     <Compile Include="Util\FileUtil\FileUtilsTest.cs" />
     <Compile Include="Util\LikertToStringConverterTest.cs" />
@@ -313,7 +312,9 @@
       <Name>KaVE.Tasks</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="UserControls\EditTask\" />
+  </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

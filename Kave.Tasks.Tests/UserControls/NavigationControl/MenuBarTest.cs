@@ -15,7 +15,6 @@
  */
 
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +27,7 @@ using KaVE.Tasks.UserControls.NavigationControl.Settings;
 using Moq;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.UserControls.NavigationControl
+namespace KaVE.Tasks.Tests.UserControls.NavigationControl
 {
     [TestFixture, RequiresSTA]
     public class MenuBarTest

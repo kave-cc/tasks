@@ -20,19 +20,27 @@ using System.Threading.Tasks;
 using KaVE.Tasks.Util.FileUtil;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.Util.FileUtil
+namespace KaVE.Tasks.Tests.Util.FileUtil
 {
     [TestFixture]
     internal class FileUtilsTest
     {
+        private const string FileBase = "test.json";
+        private string _dir;
+        private int _counter;
+        private string _currentFile;
+
+        private FileStream _stream;
+
         [SetUp]
         public void SetUp()
         {
-            Directory.CreateDirectory(TestDirectory);
+            _dir = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            Directory.CreateDirectory(_dir);
             var fileName = _counter + FileBase;
 
             _counter++;
-            _currentFile = Path.Combine(TestDirectory, fileName);
+            _currentFile = Path.Combine(_dir, fileName);
             _stream = File.Create(_currentFile);
         }
 
@@ -40,18 +48,7 @@ namespace KaVE.Tasks.Test.Util.FileUtil
         public void TearDown()
         {
             _stream.Dispose();
-            Directory.Delete(TestDirectory, true);
-        }
-
-        private FileStream _stream;
-        private const string TestDirectory = "FileUtilsTest";
-        private const string FileBase = "test.json";
-        private int _counter;
-        private string _currentFile;
-
-        [TestFixtureSetUp]
-        public void TestFixtureSetUp()
-        {
+            Directory.Delete(_dir, true);
         }
 
         [Test]

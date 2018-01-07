@@ -15,10 +15,9 @@
  */
 
 using KaVE.Commons.Model;
-using KaVE.Tasks;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.TasksVersionUtilTestSuite
+namespace KaVE.Tasks.Tests.TasksVersionUtilTestSuite
 {
     internal class DevelopmentTest
     {

@@ -17,7 +17,7 @@
 using KaVE.Tasks.Util;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.Util
+namespace KaVE.Tasks.Tests.Util
 {
     [TestFixture]
     public class MinutesToDurationConverterTest

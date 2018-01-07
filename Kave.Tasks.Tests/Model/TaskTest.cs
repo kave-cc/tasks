@@ -19,7 +19,7 @@ using KaVE.Commons.Model.Events.Enums;
 using KaVE.Tasks.Model;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.Model
+namespace KaVE.Tasks.Tests.Model
 {
     [TestFixture]
     public class TaskTest
@@ -236,6 +236,28 @@ namespace KaVE.Tasks.Test.Model
             copy.Urgency = Likert5Point.Negative2;
 
             Assert.AreNotEqual(task.GetHashCode(), copy.GetHashCode());
+        }
+
+        [Test]
+        public void WhenSubTaskIsAdded_TaskIsInSubTasks()
+        {
+            var task = new Task();
+            var subTask = new Task();
+
+            task.AddSubTask(subTask);
+
+            Assert.IsTrue(task.SubTasks.Contains(subTask));
+        }
+
+        [Test]
+        public void WhenSubTaskIsAdded_SubTaskParentIsParent()
+        {
+            var task = new Task();
+            var subTask = new Task();
+
+            task.AddSubTask(subTask);
+
+            Assert.AreEqual(task, subTask.Parent);
         }
     }
 }

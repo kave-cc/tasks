@@ -18,7 +18,7 @@ using System;
 using KaVE.Tasks.Model;
 using NUnit.Framework;
 
-namespace KaVE.Tasks.Test.Model
+namespace KaVE.Tasks.Tests.Model
 {
     [TestFixture]
     public class IntervalTest
@@ -139,7 +139,7 @@ namespace KaVE.Tasks.Test.Model
             var actual = interval.GetTimeSpan();
             var expected = new TimeSpan(0);
 
-            Assert.AreEqual(expected, actual);
+            Assert.AreEqual(expected.Seconds, actual.Seconds);
         }
 
         [Test]
