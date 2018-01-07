@@ -56,7 +56,6 @@ namespace KaVE.Tasks.Repository
     [ShellComponent]
     public class TaskRepository : INotifyPropertyChanged, ITaskRepository, IDisposable
     {
-        private const string DefaultFile = "tasks.json";
         public static string RootTaskId = "Root";
         private readonly string _fileUri;
         private readonly FileChangeWatcher _watcher;

@@ -18,13 +18,11 @@ limitations under the License.
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:converter="clr-namespace:KaVE.Tasks.UserControls.TaskDetail.Converter"
              xmlns:util="clr-namespace:KaVE.Tasks.Util"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
-        <converter:PrettyDateConverter x:Key="DateConverter"/>
         <util:TimeSpanToStringConverter x:Key="TimeSpanConverter" />
         <Image x:Key="ExpandIcon" Source="../../Resources/Icons/Expand_16x.png" Width="16" Height="16" x:Shared="False"/>
         <Image x:Key="ShowIcon" Source="../../Resources/Icons/Expand_16x.png" Width="16" Height="16"/>

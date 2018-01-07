@@ -33,6 +33,7 @@ namespace KaVE.Tasks.Model
     public class Task : INotifyPropertyChanged, ICloneable
     {
         public string Id = Guid.NewGuid().ToString();
+        public event PropertyChangedEventHandler PropertyChanged;
 
         private string _title = "";
         public string Title
@@ -191,7 +192,11 @@ namespace KaVE.Tasks.Model
             return false;
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
+        public void AddSubTask(Task task)
+        {
+            SubTasks.Add(task);
+            task.Parent = this;
+        }
 
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
@@ -281,7 +286,9 @@ namespace KaVE.Tasks.Model
 
         public override string ToString()
         {
-            return this.ToStringReflection();
+            return "{" +
+                   "    Id: " + Id.ToString()
+                   +"}";
         }
     }
 }

@@ -57,6 +57,7 @@ namespace KaVE.Tasks.Util.FileUtil
 
         public void Dispose()
         {
+            _watcher.EnableRaisingEvents = false;
             _watcher?.Dispose();
         }
 

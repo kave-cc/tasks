@@ -311,7 +311,6 @@
     <Compile Include="UserControls\NavigationControl\TaskContextMenu.xaml.cs">
       <DependentUpon>TaskContextMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\TaskDetail\Converter\PrettyDateConverter.cs" />
     <Compile Include="UserControls\TaskDetail\TaskDetailContext.cs" />
     <Compile Include="UserControls\TaskDetail\TaskDetailControl.xaml.cs">
       <DependentUpon>TaskDetailControl.xaml</DependentUpon>
